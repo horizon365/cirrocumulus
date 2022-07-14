@@ -102,11 +102,10 @@ Google App Engine
 
     gcloud app create --project=<PROJECT>
 
-- Obtain OAuth 2.0 credentials.
+- Set up OAuth 2.0.
 
-    - Create an OAuth client id. Set the OAuth consent screen application name and add your server URL to the list of “Authorized domains”. Your server URL is \https://<PROJECT>.appspot.com.
-    - Go to Credentials and click “Create Credentials > OAuth client ID”. Enter “Web application” for “Application Type”
-      and your server URL for “Authorized JavaScript origins”. Click “Create” to create the credentials.
+    - Follow the instructions at https://support.google.com/cloud/answer/6158849. Add your server URL to the list of “Authorized domains”. Your server URL is \https://<PROJECT>.appspot.com.
+
 
 - Replace CIRRO_AUTH_CLIENT_ID in app.yaml with your OAuth client id. You can optionally edit `app.yaml`_ to further customize your application settings.
 
