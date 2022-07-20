@@ -13,6 +13,7 @@ import {RestDataset} from '../RestDataset';
 import {RestServerApi} from '../RestServerApi';
 import {StaticServerApi} from '../StaticServerApi';
 
+import {intFormat} from '../formatters';
 import {getPositions} from '../ThreeUtil';
 import {
     addFeatureSetsToX,
@@ -46,18 +47,20 @@ const authScopes = [
 ];
 
 
-export const DEFAULT_POINT_SIZE = 1;
+//export const DEFAULT_POINT_SIZE = 1;
+export const DEFAULT_POINT_SIZE = 1.1;
 export const DEFAULT_MARKER_OPACITY = 1;
 export const DEFAULT_UNSELECTED_MARKER_OPACITY = 0.1;
 export const DEFAULT_INTERPOLATORS = {};
-DEFAULT_INTERPOLATORS[FEATURE_TYPE.X] = {name: 'Viridis', reversed: false, value: getInterpolator('Viridis')};
+//DEFAULT_INTERPOLATORS[FEATURE_TYPE.X] = {name: 'Viridis', reversed: false, value: getInterpolator('Viridis')};
+DEFAULT_INTERPOLATORS[FEATURE_TYPE.X] = {name: 'Reds', reversed: false, value: getInterpolator('Reds')};
 DEFAULT_INTERPOLATORS[FEATURE_TYPE.COUNT] = {name: 'Greys', reversed: false, value: getInterpolator('Greys')};
 DEFAULT_INTERPOLATORS[FEATURE_TYPE.OBS] = {name: 'Inferno', reversed: false, value: getInterpolator('Inferno')};
 DEFAULT_INTERPOLATORS[FEATURE_TYPE.MODULE] = {name: 'RdBu', reversed: true, value: getInterpolator('RdBu')};
 
 
 export const DEFAULT_DISTRIBUTION_PLOT_INTERPOLATOR = 'Reds';
-export const DEFAULT_DRAG_MODE = 'pan';
+export const DEFAULT_DRAG_MODE = process.env.REACT_APP_DEFAULT_DRAG_MODE || 'pan';
 
 export const DEFAULT_SHOW_AXIS = true;
 export const DEFAULT_SHOW_FOG = false;
@@ -968,8 +971,17 @@ function getDefaultDatasetView(dataset) {
     let selectedEmbedding = null;
     let obsCat = null;
     if (embeddingNames.length > 0) {
-        let embeddingPriorities = ['tissue_hires', 'fle', 'umap', 'tsne'];
+        let embeddingPriorities = ['spatial','tissue_hires', 'fle', 'umap', 'tsne'];
         let embeddingName = null;
+        for (let priorityIndex = 0; priorityIndex < embeddingPriorities.length && embeddingName == null; priorityIndex++) {
+            for (let i = 0; i < embeddingNames.length; i++) {
+                if (embeddingNames[i].toLowerCase() === embeddingPriorities[priorityIndex]) {
+                    embeddingName = embeddingNames[i];
+                    break;
+                }
+            }
+        }
+
         for (let priorityIndex = 0; priorityIndex < embeddingPriorities.length && embeddingName == null; priorityIndex++) {
             for (let i = 0; i < embeddingNames.length; i++) {
                 if (embeddingNames[i].toLowerCase().indexOf(embeddingPriorities[priorityIndex]) !== -1) {
@@ -996,7 +1008,15 @@ function getDefaultDatasetView(dataset) {
         }
     }
     if (obsCat == null) {
-        let catPriorities = ['anno', 'cell_type', 'celltype', 'leiden', 'louvain', 'seurat_cluster', 'cluster'];
+        let catPriorities = ['annotation','anno', 'cell_type', 'celltype', 'leiden', 'louvain', 'seurat_cluster', 'cluster','batch','sample','cell lines'];
+        for (let priorityIndex = 0; priorityIndex < catPriorities.length && obsCat == null; priorityIndex++) {
+            for (let i = 0; i < dataset.obsCat.length; i++) {
+                if (dataset.obsCat[i].toLowerCase() === catPriorities[priorityIndex]) {
+                    obsCat = dataset.obsCat[i];
+                    break;
+                }
+            }
+        }
         for (let priorityIndex = 0; priorityIndex < catPriorities.length && obsCat == null; priorityIndex++) {
             for (let i = 0; i < dataset.obsCat.length; i++) {
                 if (dataset.obsCat[i].toLowerCase().indexOf(catPriorities[priorityIndex]) !== -1) {
@@ -2171,6 +2191,7 @@ function getNewEmbeddingData(state, features) {
                     dimensions: z != null ? 3 : 2,
                     date: new Date(),
                     active: true,
+                    psize: state.dataset.psize,
                     colorScale: colorScale,
                     continuous: !isCategorical,
                     isCategorical: isCategorical,
@@ -2320,9 +2341,15 @@ export function getDatasetStateJson(state) {
         if (value !== defaultChartOptions[key]) {
             jsonChartOptions[key] = value;
         }
-    }
+    } 
+    json.pointSize=2;
+    //DEFAULT_POINT_SIZE=2;
     if (pointSize !== DEFAULT_POINT_SIZE) {
         json.pointSize = pointSize;
+	//let d2=intFormat(dataset[0])
+	//if( d2 < 10000){
+	//     json.pointSize=2;
+	//}
     }
 
 

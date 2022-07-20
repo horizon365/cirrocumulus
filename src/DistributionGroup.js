@@ -431,8 +431,8 @@ class DistributionGroup extends React.PureComponent {
                         value={chartType}
                         onChange={this.onChartTypeChange}
                     >
-                        {this.props.showDotPlotOption && <MenuItem value={'dotplot'}>Dot Plot</MenuItem>}
-                        <MenuItem value={'heatmap'}>Heatmap</MenuItem>
+                        {this.props.showDotPlotOption && <MenuItem value={'heatmap'}>Heatmap</MenuItem>}
+                        <MenuItem value={'dotplot'}>Dot Plot</MenuItem>
                         <MenuItem value={'violin'}>Violin</MenuItem>
                     </Select>
                 </FormControl>

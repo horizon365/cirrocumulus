@@ -444,7 +444,7 @@ function ExplorePanel(props) {
         </Menu>}
         <div style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? null : {display: 'none'}}>
             <Typography gutterBottom={false} component={"h1"}
-                        style={{textTransform: 'uppercase', letterSpacing: '0.1em'}}>Explore</Typography>
+                        style={{textTransform: 'capitalize'}}>Explore</Typography>
             {embeddingOptions.length > 0 &&
             <FormControl sx={{display: 'block'}}>
                 <AutocompleteVirtualized label={"Embeddings"}
@@ -468,7 +468,7 @@ function ExplorePanel(props) {
                                          groupBy={(option) => option.group}
                                          onChange={onFeaturesChange}
                                          getOptionLabel={(option) => option.text}
-                                         helperText={"Enter or paste list"}
+                                         //helperText={"Enter or paste list"}
 
                 />
                 <div><Link
@@ -576,7 +576,7 @@ function ExplorePanel(props) {
             style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? {maxHeight: 500} : {display: 'none'}}>
             <Divider inset="true"/>
             <Typography gutterBottom={false} component={"h1"}
-                        style={{textTransform: 'uppercase'}}>Filters</Typography>
+                        style={{textTransform: 'capitalize'}}>Filters</Typography>
             <Grid alignContent={"flex-start"} container alignItems="center"
                   spacing={0}>
                 <Grid item><InputLabel shrink={true}>Combine</InputLabel></Grid>

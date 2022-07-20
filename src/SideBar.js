@@ -44,19 +44,22 @@ import JobPanel from './JobPanel';
 import Popover from '@mui/material/Popover';
 import ReactMarkdown from 'markdown-to-jsx';
 
-const pointSizeOptions = [{value: 0.1, label: '10%'}, {value: 0.25, label: '25%'}, {value: 0.5, label: '50%'}, {
+const pointSizeOptions = [{value: 1.1, label: 'default'},{value: 0.1, label: '10%'}, {value: 0.25, label: '25%'}, {value: 0.5, label: '50%'}, {
     value: 0.75,
     label: '75%'
-}, {value: 1, label: '100%'}, {value: 1.5, label: '150%'}, {value: 2, label: '200%'}, {
+}, {value: 1, label: '100%'}, {value: 1.25, label: '125%'},{value: 1.5, label: '150%'},{value: 1.75, label: '175%'}, {value: 2, label: '200%'}, {
     value: 3,
     label: '300%'
 }, {value: 4, label: '400%'}, {value: 5, label: '500%'}];
-const gallerySizeOptions = [{value: 200, label: 'Extra Small'}, {value: 300, label: 'Small'}, {
-    value: 500,
+const gallerySizeOptions = [{value: 50, label: 'Extra Small'}, {value: 100, label: 'Small'}, {
+    value: 200,
     label: 'Medium'
 }, {
-    value: 800,
+    value: 300,
     label: 'Large'
+},{
+    value: 500,
+    label: 'Extra Large'
 }];
 
 const styles = theme => ({
@@ -65,7 +68,7 @@ const styles = theme => ({
         flexDirection: 'column',
         margin: theme.spacing(0, 0.5)
     },
-    title: {textTransform: 'uppercase'},
+    title: {textTransform: 'capitalize'},
     formControl: {
         display: 'block',
         minWidth: 216,
@@ -326,7 +329,6 @@ class SideBar extends React.PureComponent {
 
         return (<div className={classes.root}>
                 <ExplorePanel/>
-                <JobPanel compareActions={compareActions}/>
                 {selectedView && <Popover
                     id={"view-details"}
                     open={Boolean(selectedViewEl)}
@@ -411,7 +413,7 @@ class SideBar extends React.PureComponent {
                         <Select
                             label={"Gallery Chart Size"}
                             labelId={"chart_size"}
-                            size={"small"}
+                            size={"Medium"}
                             className={classes.select}
                             onChange={this.onChartSizeChange}
                             value={chartSize}
@@ -468,62 +470,6 @@ class SideBar extends React.PureComponent {
 
                 </div>
 
-                {serverInfo.capabilities.has(SERVER_CAPABILITY_LINKS) &&
-                    <div
-                        style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? null : {display: 'none'}}>
-                        <Divider/>
-                        <Typography gutterBottom={false} component={"h1"}
-                                    className={classes.title}>Links</Typography>
-                        <Divider/>
-                        <FormControl className={classes.formControl}>
-                            <Tooltip title={"Save Current Visualization State"}><Link
-                                style={{
-                                    float: 'right',
-                                    fontSize: '0.75rem'
-                                }}
-                                onClick={this.onViewSaved}>Save</Link></Tooltip></FormControl>
-
-                        {datasetViews.length === 0 &&
-                            <Box color="text.secondary">No saved links</Box>}
-                        {datasetViews.length > 0 &&
-                            <List dense={true} style={{marginTop: 10}}>
-                                {datasetViews.map(item => (
-                                    <ListItem key={item.id} data-key={item.id} button
-                                              onClick={e => this.openView(item.id)}>
-                                        <ListItemText primary={item.name}/>
-                                        <ListItemSecondaryAction>
-                                            {(item.notes || item.last_updated) && <IconButton
-                                                edge="end"
-                                                aria-label="info"
-                                                onClick={e => this.viewDetails(e, item.id)}
-                                                size="small">
-                                                <InfoIcon/>
-                                            </IconButton>}
-                                            <IconButton
-                                                edge="end"
-                                                aria-label="copy"
-                                                onClick={e => this.copyView(item.id)}
-                                                size="small">
-                                                <LinkIcon/>
-                                            </IconButton>
-                                            <IconButton
-                                                edge="end"
-                                                aria-label="delete"
-                                                onClick={e => this.deleteView(item.id)}
-                                                size="small">
-                                                <DeleteIcon/>
-                                            </IconButton>
-                                        </ListItemSecondaryAction>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        }
-
-                    </div>}
-
-                <div style={tab === 'results' ? null : {display: 'none'}}>
-                    <JobResultOptions/>
-                </div>
             </div>
         );
     }

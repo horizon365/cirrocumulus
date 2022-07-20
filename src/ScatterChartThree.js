@@ -129,6 +129,17 @@ function ScatterChartThree(props) {
     const showFog = chartOptions.showFog;
 
     useEffect(() => {
+        function webglcontextlost(e) {
+            console.log('lost webgl context');
+            e.preventDefault();
+        }
+
+        function webglcontextrestored(e) {
+            console.log('restored webgl context');
+            e.preventDefault();
+            setForceUpdate(c => !c);
+        }
+
         if (scatterPlotRef.current == null) {
             const dragmode = chartOptions.dragmode;
             scatterPlotRef.current = createScatterPlot(containerElementRef.current, window.ApplePaySession, true);
@@ -144,15 +155,6 @@ function ScatterChartThree(props) {
 
             const canvas = containerElementRef.current.querySelector('canvas');
             canvas.style.outline = '0px';
-            const webglcontextlost = (e) => {
-                console.log('lost webgl context');
-                e.preventDefault();
-            };
-            const webglcontextrestored = (e) => {
-                console.log('restored webgl context');
-                e.preventDefault();
-                setForceUpdate(c => !c);
-            };
             canvas.addEventListener('webglcontextlost', webglcontextlost);
             canvas.addEventListener('webglcontextrestored', webglcontextrestored);
         }
@@ -161,6 +163,13 @@ function ScatterChartThree(props) {
             chartOptions.camera = null;
         }
         chartOptions.scatterPlot = scatterPlotRef.current;
+        return () => {
+            if (containerElementRef.current) {
+                const canvas = containerElementRef.current.querySelector('canvas');
+                canvas.removeEventListener('webglcontextlost', webglcontextlost);
+                canvas.removeEventListener('webglcontextrestored', webglcontextrestored);
+            }
+        };
     }, [scatterPlotRef, containerElementRef, chartOptions]);
 
 
@@ -192,7 +201,7 @@ function ScatterChartThree(props) {
 
             if (selectedIndex === -1) {
                 // TODO get all hover points
-                for (let i = 0, k = 0, npoints = trace.x.length; i < npoints; i++, k += 3) {
+                for (let i = 0, k = 0, npoints = trace.values.length; i < npoints; i++, k += 3) {
                     pos.x = positions[k];
                     pos.y = positions[k + 1];
                     pos.z = positions[k + 2];
@@ -270,7 +279,7 @@ function ScatterChartThree(props) {
             const pos = new Vector3();
             const selectedIndices = new Set();
 
-            for (let i = 0, k = 0, npoints = trace.x.length; i < npoints; i++, k += 3) {
+            for (let i = 0, k = 0, npoints = trace.values.length; i < npoints; i++, k += 3) {
                 pos.x = positions[k];
                 pos.y = positions[k + 1];
                 pos.z = positions[k + 2];
@@ -302,7 +311,7 @@ function ScatterChartThree(props) {
             const pos = new Vector3();
             const selectedIndices = new Set();
 
-            for (let i = 0, k = 0, npoints = trace.x.length; i < npoints; i++, k += 3) {
+            for (let i = 0, k = 0, npoints = trace.values.length; i < npoints; i++, k += 3) {
                 pos.x = positions[k];
                 pos.y = positions[k + 1];
                 pos.z = positions[k + 2];
@@ -333,6 +342,13 @@ function ScatterChartThree(props) {
                 }
             }
         };
+        return () => {
+            scatterPlotRef.current.clickCallback = null;
+            scatterPlotRef.current.hoverCallback = null;
+            scatterPlotRef.current.lassoCallback = null;
+            scatterPlotRef.current.boxCallback = null;
+            scatterPlotRef.current.cameraCallback = null;
+        };
     }, [scatterPlotRef, categoricalNames, chartSize, trace]); // onSelected, handleClick, onCamera
 
     useEffect(() => {
@@ -362,7 +378,7 @@ function ScatterChartThree(props) {
     }, []);
 
     function calculatePointSize(trace) {
-        const n = trace.x.length;
+        const n = trace.values.length;
         const SCALE = 200;
         const LOG_BASE = 8;
         const DIVISOR = 1.5;
@@ -387,7 +403,7 @@ function ScatterChartThree(props) {
         const widthHalf = width / 2;
         const heightHalf = height / 2;
         const colorScaleConverter = scaleLinear().domain([0, 1]).range([0, 255]);
-        const npoints = trace.x.length;
+        const npoints = trace.values.length;
         const is3d = trace.dimensions === 3;
         const fog = scatterPlot.scene.fog;
         const camera = scatterPlot.camera;

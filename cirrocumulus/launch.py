@@ -70,10 +70,11 @@ def create_app():
     from flask import Flask, send_from_directory
     os.environ['WERKZEUG_RUN_MAIN'] = 'true'
     app = Flask(__name__, static_folder='client', static_url_path='')
-    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-    app.register_blueprint(cirro_blueprint, url_prefix='/api')
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0 
+    app.register_blueprint(cirro_blueprint, url_prefix='/stomics/api/explore/api')
 
-    @app.route('/')
+    #@app.route('/stomics/api/explore/')
+    @app.route('/stomics/api/explore/')
     def root():
         return send_from_directory(os.path.abspath(os.path.join(app.root_path, "client")), "index.html")
 

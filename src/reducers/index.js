@@ -76,7 +76,7 @@ import {
 
 
 export const DIST_PLOT_OPTIONS = {
-    chartType: 'dotplot',
+    chartType: 'heatmap',
     violinScale: 'width',
     violinHeight: 100,
     violinWidth: 80,
@@ -117,7 +117,7 @@ const DEFAULT_CHART_OPTIONS = {
     labelStrokeWidth: DEFAULT_LABEL_STROKE_WIDTH
 };
 
-function chartSize(state = 300, action) {
+function chartSize(state = 200, action) {
     switch (action.type) {
         case SET_CHART_SIZE:
             return action.payload;
@@ -189,7 +189,7 @@ function chartOptions(state = DEFAULT_CHART_OPTIONS, action) {
         case SET_CHART_OPTIONS:
             return Object.assign({}, action.payload);
         case RESTORE_VIEW:
-            return action.payload.chartOptions ? Object.assign(DEFAULT_CHART_OPTIONS, action.payload.chartOptions) : state;
+            return action.payload.chartOptions ? Object.assign({},DEFAULT_CHART_OPTIONS, action.payload.chartOptions) : state;
         default:
             return state;
     }

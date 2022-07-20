@@ -219,8 +219,6 @@ function AppHeader(props) {
                 >
                     <MenuIcon/>
                 </IconButton>
-                <CirroIcon/>
-                <Typography variant="h5" sx={{paddingRight: 1}}>Cirro</Typography>
 
                 <Typography sx={{paddingRight: 1}}
                             variant="subtitle2">&nbsp;{hasSelection && shape != null && intFormat(selection.size) + ' / '}
@@ -240,10 +238,6 @@ function AppHeader(props) {
                              disabled={dataset == null}/>
                         <Tab data-testid="distributions-tab" value="distribution" label="Distributions"
                              disabled={dataset == null || distributionData.length === 0}/>
-                        <Tab data-testid="composition-tab" value="composition" label="Composition"
-                             disabled={dataset == null || obsCat.length < 2}/>
-                        {<Tab data-testid="results-tab" value="results" label="Results"
-                              disabled={dataset == null || jobResults.length === 0}/>}
                     </Tabs>
                     {serverInfo.brand &&
                     <ReactMarkdown options={{
@@ -253,36 +247,6 @@ function AppHeader(props) {
                             return React.createElement(type, props, children);
                         }
                     }} children={serverInfo.brand}/>}
-                    {!loadingApp.loading && !isSignedOut && <DatasetSelector onChange={onDataset}/>}
-                    {showMoreMenu && <Tooltip title={'More'}>
-                        <IconButton
-                            aria-label="Menu"
-                            aria-haspopup="true"
-                            onClick={onMoreMenuOpen}
-                            size="large">
-                            <MoreVertIcon/>
-                        </IconButton>
-                    </Tooltip>}
-                    {showMoreMenu && <Menu id="more-menu"
-                                           anchorEl={moreMenuAnchorEl}
-                                           anchorOrigin={{
-                                               vertical: 'top',
-                                               horizontal: 'right'
-                                           }}
-                                           transformOrigin={{
-                                               vertical: 'top',
-                                               horizontal: 'right'
-                                           }} open={moreMenuOpen}
-                                           onClose={onMoreMenuClose}>
-                        {showAddDataset && <MenuItem onClick={onImportDataset}>
-                            New Dataset
-                        </MenuItem>}
-
-                        {showEditDataset && <MenuItem onClick={onSettings}>Edit Dataset</MenuItem>}
-                        {showDeleteDataset && <MenuItem onClick={onDelete}>Delete Dataset</MenuItem>}
-                        {(showAddDataset || showEditDataset || showDeleteDataset) && dataset != null && <Divider/>}
-                        {dataset != null && <MenuItem onClick={copyLink}>Copy Link </MenuItem>}
-                    </Menu>}
                     {<Tooltip title={"Toggle Light/Dark Theme"}>
                         <IconButton
                             edge={false}
@@ -291,21 +255,6 @@ function AppHeader(props) {
                             onClick={() => onDarkMode()}
                             size="large">
                             <Brightness2Icon/>
-                        </IconButton>
-                    </Tooltip>}
-                    {dataset != null && <Tooltip title={'Help'}>
-                        <IconButton aria-label="Help" onClick={onHelp} size="large">
-                            <HelpIcon/>
-                        </IconButton>
-                    </Tooltip>}
-                    {email != null && email !== '' &&
-                    <Tooltip title={email}>
-                        <IconButton
-                            aria-label="Menu"
-                            aria-haspopup="true"
-                            onClick={onUserMenuOpen}
-                            size="large">
-                            <AccountCircle/>
                         </IconButton>
                     </Tooltip>}
                     {email != null && email !== '' &&
