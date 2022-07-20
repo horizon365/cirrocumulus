@@ -13,6 +13,7 @@ import {RestDataset} from '../RestDataset';
 import {RestServerApi} from '../RestServerApi';
 import {StaticServerApi} from '../StaticServerApi';
 
+import {intFormat} from '../formatters';
 import {getPositions} from '../ThreeUtil';
 import {
     addFeatureSetsToX,
@@ -35,10 +36,15 @@ import {
     updateTraceColors
 } from '../util';
 import {updateJob} from '../DotPlotJobResultsPanel';
-import {NoAuth} from '../NoAuth';
-import {GoggleAuth} from '../GoogleAuth';
 
 export const API = process.env.REACT_APP_API_URL || 'api';
+const authScopes = [
+    'email'
+    // 'profile',
+    // 'https://www.googleapis.com/auth/userinfo.profile',
+    // 'https://www.googleapis.com/auth/contacts.readonly',
+    // 'https://www.googleapis.com/auth/devstorage.full_control',
+];
 
 
 //export const DEFAULT_POINT_SIZE = 1;
@@ -46,7 +52,8 @@ export const DEFAULT_POINT_SIZE = 1.1;
 export const DEFAULT_MARKER_OPACITY = 1;
 export const DEFAULT_UNSELECTED_MARKER_OPACITY = 0.1;
 export const DEFAULT_INTERPOLATORS = {};
-DEFAULT_INTERPOLATORS[FEATURE_TYPE.X] = {name: 'Viridis', reversed: false, value: getInterpolator('Viridis')};
+//DEFAULT_INTERPOLATORS[FEATURE_TYPE.X] = {name: 'Viridis', reversed: false, value: getInterpolator('Viridis')};
+DEFAULT_INTERPOLATORS[FEATURE_TYPE.X] = {name: 'Reds', reversed: false, value: getInterpolator('Reds')};
 DEFAULT_INTERPOLATORS[FEATURE_TYPE.COUNT] = {name: 'Greys', reversed: false, value: getInterpolator('Greys')};
 DEFAULT_INTERPOLATORS[FEATURE_TYPE.OBS] = {name: 'Inferno', reversed: false, value: getInterpolator('Inferno')};
 DEFAULT_INTERPOLATORS[FEATURE_TYPE.MODULE] = {name: 'RdBu', reversed: true, value: getInterpolator('RdBu')};
@@ -136,7 +143,7 @@ export const SET_LOADING_APP = 'LOADING_APP';
 
 export const SET_JOB_RESULTS = 'SET_JOB_RESULTS';
 export const SET_JOB_RESULT = 'SET_JOB_RESULT';
-let auth = new NoAuth();
+
 
 export function getEmbeddingKey(embedding, includeDensity = true) {
     let key = embedding.name;
@@ -147,8 +154,8 @@ export function getEmbeddingKey(embedding, includeDensity = true) {
 }
 
 
-export function getTraceKey(trace) {
-    return trace.name + '_' + getEmbeddingKey(trace.embedding);
+export function getTraceKey(traceInfo) {
+    return traceInfo.name + '_' + getEmbeddingKey(traceInfo.embedding);
 }
 
 
@@ -158,7 +165,7 @@ function getUser() {
     };
 }
 
-export function initAuth() {
+export function initGapi() {
     return function (dispatch, getState) {
         dispatch(_setLoadingApp({loading: true, progress: 0}));
         const startTime = new Date().getTime();
@@ -231,13 +238,24 @@ export function initAuth() {
                     }]));
                     dispatch(_loadSavedView());
                 }
+
             } else {
-                auth = new GoggleAuth();
                 console.log((new Date().getTime() - startTime) / 1000 + " startup time");
-                auth.init(serverInfo).then(() => {
-                    dispatch(_setLoadingApp({loading: false, progress: 0}));
-                    dispatch(initLogin(true));
-                });
+                let script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://apis.google.com/js/api.js';
+                script.onload = (e) => {
+                    window.gapi.load('client:auth2', () => {
+                        window.gapi.client.init({
+                            clientId: serverInfo.clientId,
+                            scope: authScopes.join(' ')
+                        }).then(() => {
+                            dispatch(_setLoadingApp({loading: false, progress: 0}));
+                            dispatch(initLogin(true));
+                        });
+                    });
+                };
+                document.getElementsByTagName('head')[0].appendChild(script);
             }
         }).catch(err => {
             console.log(err);
@@ -249,7 +267,7 @@ export function initAuth() {
 
 export function logout() {
     return function (dispatch, getState) {
-        auth.signOut().then(() => {
+        window.gapi.auth2.getAuthInstance().signOut().then(() => {
             dispatch({type: SET_EMAIL, payload: null});
             dispatch(_setDataset(null));
         });
@@ -258,14 +276,14 @@ export function logout() {
 
 export function login() {
     return function (dispatch, getState) {
-        auth.signIn().then(e => {
+        window.gapi.auth2.getAuthInstance().signIn().then(e => {
             dispatch(initLogin());
         });
     };
 }
 
 
-export function openLink(id, loadDataset = false) {
+export function openView(id, loadDataset = false) {
     return function (dispatch, getState) {
         const task = {name: 'Open view'};
         dispatch(addTask(task));
@@ -288,14 +306,14 @@ export function openLink(id, loadDataset = false) {
  * @param payload Object with name, notes
  * @returns {(function(*=, *): void)|*}
  */
-export function saveLink(payload) {
+export function saveView(payload) {
     return function (dispatch, getState) {
         const state = getState();
         const value = getDatasetStateJson(state);
         payload.value = value;
         delete value['dataset'];
         payload = Object.assign({ds_id: state.dataset.id}, payload);
-        const task = {name: 'Save link'};
+        const task = {name: 'Save view'};
         dispatch(addTask(task));
         getState().serverInfo.api.upsertViewPromise(payload, false)
             .then(result => {
@@ -313,19 +331,21 @@ export function saveLink(payload) {
     };
 }
 
-export function deleteLink(id) {
+export function deleteView(id) {
     return function (dispatch, getState) {
-        const task = {name: 'Delete link'};
+        const task = {name: 'Delete view'};
         dispatch(addTask(task));
         getState().serverInfo.api.deleteViewPromise(id, getState().dataset.id)
             .then(() => {
-                const array = getState().datasetViews;
-                const index = findIndex(array, item => item.id === id);
-                if (index !== -1) {
-                    array.splice(index, 1);
-                    dispatch(setDatasetViews(array.slice()));
-                    dispatch(setMessage('Link deleted'));
+                let array = getState().datasetViews;
+                for (let i = 0; i < array.length; i++) {
+                    if (array[i].id === id) {
+                        array.splice(i, 1);
+                        break;
+                    }
                 }
+                dispatch(setDatasetFilters(array.slice()));
+                dispatch(setMessage('Link deleted'));
             }).finally(() => {
             dispatch(removeTask(task));
             dispatch(setDialog(null));
@@ -951,8 +971,17 @@ function getDefaultDatasetView(dataset) {
     let selectedEmbedding = null;
     let obsCat = null;
     if (embeddingNames.length > 0) {
-        let embeddingPriorities = ['tissue_hires', 'fle', 'umap', 'tsne'];
+        let embeddingPriorities = ['spatial','tissue_hires', 'fle', 'umap', 'tsne'];
         let embeddingName = null;
+        for (let priorityIndex = 0; priorityIndex < embeddingPriorities.length && embeddingName == null; priorityIndex++) {
+            for (let i = 0; i < embeddingNames.length; i++) {
+                if (embeddingNames[i].toLowerCase() === embeddingPriorities[priorityIndex]) {
+                    embeddingName = embeddingNames[i];
+                    break;
+                }
+            }
+        }
+
         for (let priorityIndex = 0; priorityIndex < embeddingPriorities.length && embeddingName == null; priorityIndex++) {
             for (let i = 0; i < embeddingNames.length; i++) {
                 if (embeddingNames[i].toLowerCase().indexOf(embeddingPriorities[priorityIndex]) !== -1) {
@@ -979,7 +1008,15 @@ function getDefaultDatasetView(dataset) {
         }
     }
     if (obsCat == null) {
-        let catPriorities = ['anno', 'cell_type', 'celltype', 'leiden', 'louvain', 'seurat_cluster', 'cluster'];
+        let catPriorities = ['annotation','anno', 'cell_type', 'celltype', 'leiden', 'louvain', 'seurat_cluster', 'cluster','batch','sample','cell lines'];
+        for (let priorityIndex = 0; priorityIndex < catPriorities.length && obsCat == null; priorityIndex++) {
+            for (let i = 0; i < dataset.obsCat.length; i++) {
+                if (dataset.obsCat[i].toLowerCase() === catPriorities[priorityIndex]) {
+                    obsCat = dataset.obsCat[i];
+                    break;
+                }
+            }
+        }
         for (let priorityIndex = 0; priorityIndex < catPriorities.length && obsCat == null; priorityIndex++) {
             for (let i = 0; i < dataset.obsCat.length; i++) {
                 if (dataset.obsCat[i].toLowerCase().indexOf(catPriorities[priorityIndex]) !== -1) {
@@ -1079,7 +1116,6 @@ function restoreSavedView(savedView) {
             })
             .then(() => dispatch(setDatasetFilter(savedView.datasetFilter)))
             .then(() => dispatch(restoreView(savedView)))
-            .then(() => dispatch(setTab(savedView)))
             .then(() => dispatch(_updateCharts()))
             .then(() => dispatch(handleFilterUpdated()))
             .then(() => {
@@ -1117,7 +1153,7 @@ function _loadSavedView() {
     return function (dispatch, getState) {
         let savedView = {dataset: null};
         // #q=
-        let q = window.location.search.substring(3);
+        let q = window.location.hash.substring(3);
         if (q.length > 0) {
             try {
                 savedView = JSON.parse(window.decodeURIComponent(q));
@@ -1126,7 +1162,7 @@ function _loadSavedView() {
             }
         }
         if (savedView.link != null) {
-            dispatch(openLink(savedView.link, true));
+            dispatch(openView(savedView.link, true));
         } else if (savedView.dataset != null) {
             dispatch(restoreSavedView(savedView));
         } else {
@@ -1137,8 +1173,10 @@ function _loadSavedView() {
 
 export function initLogin(loadSavedView) {
     return function (dispatch, getState) {
-        const email = auth.getEmail();
-        if (email != null) {
+        let isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
+        if (isSignedIn) {
+            let googleUser = window.gapi.auth2.getAuthInstance().currentUser.get();
+            let email = googleUser.getBasicProfile().getEmail();
             dispatch(_setEmail(email));
             dispatch(getUser());
             dispatch(listDatasets()).then(() => {
@@ -1151,38 +1189,49 @@ export function initLogin(loadSavedView) {
     };
 }
 
+export function getAccessToken() {
+    return window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token;
+}
 
 export function getIdToken() {
-    return auth.getIdToken();
+    return typeof window.gapi !== 'undefined' ? window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().id_token : '';
 }
 
 export function saveDataset(payload) {
     return function (dispatch, getState) {
         let existingDataset = payload.dataset;
         const isEdit = existingDataset != null;
-        if (existingDataset == null) {
-            existingDataset = {};
-        }
-
         const formData = {};
-        const blacklist = new Set(['dataset']);
-        for (let key in payload) {
-            if (!blacklist.has(key)) {
-                const value = payload[key];
-                const existingValue = existingDataset[key];
-                if (isArray(value)) {
-                    const stringValue = (value || []).join(',');
-                    const existingStringValue = isArray(existingValue) ? existingValue.join(', ') : existingValue;
-                    if (stringValue !== existingStringValue) {
-                        formData[key] = value;
+        if (existingDataset != null) {
+            const existingReaders = new Set(existingDataset.readers);
+            if (payload.readers != null) {
+                let setsEqual = existingReaders.size === payload.readers.length;
+                if (setsEqual) {
+                    for (let i = 0; i < payload.readers.length; i++) {
+                        if (!existingReaders.has(payload.readers[i])) {
+                            setsEqual = false;
+                            break;
+                        }
                     }
-                } else {
-                    if (value != null && value !== existingValue) {
-                        formData[key] = value;
-                    }
+                }
+                if (!setsEqual) {
+                    formData.readers = payload.readers;
                 }
             }
         }
+        if (existingDataset == null) {
+            existingDataset = {};
+        }
+        const blacklist = new Set(['readers', 'dataset']);
+        for (let key in payload) {
+            if (!blacklist.has(key)) {
+                const value = payload[key];
+                if (value != null && value !== existingDataset[key]) {
+                    formData[key] = value;
+                }
+            }
+        }
+
 
         if (Object.keys(formData).length === 0) {
             dispatch(setDialog(null));
@@ -1494,20 +1543,6 @@ export function setDataset(id, loadDefaultView = true, setLoading = true) {
         function onPromisesComplete() {
             newDataset = Object.assign({}, dataset, newDataset);
             newDataset.api = dataset.api;
-            newDataset.features = newDataset.var;
-            newDataset.features.sort((a, b) => {
-                a = a.toLowerCase();
-                b = b.toLowerCase();
-                const aIsDigit = a[0] >= '0' && a[0] <= '9';
-                const bIsDigit = b[0] >= '0' && b[0] <= '9';
-                if (aIsDigit) {
-                    a = 'zzzzzz' + a;
-                }
-                if (bIsDigit) {
-                    b = 'zzzzzz' + b;
-                }
-                return (a < b ? -1 : (a === b ? 0 : 1));
-            });
             newDataset.id = id;
             dispatch(_setDataset(newDataset));
 
@@ -1775,13 +1810,13 @@ function _updateCharts(onError, updateActiveFeature = true) {
             groupedSearchTokens[key].forEach(item => features.add(item.id));
         });
         // set active flag on cached embedding data
-        embeddingData.forEach(trace => {
-            const embeddingKey = getEmbeddingKey(trace.embedding);
-            const active = embeddingKeys.has(embeddingKey) && (features.has(trace.name) || (features.size === 0 && trace.name === '__count'));
+        embeddingData.forEach(traceInfo => {
+            const embeddingKey = getEmbeddingKey(traceInfo.embedding);
+            const active = embeddingKeys.has(embeddingKey) && (features.has(traceInfo.name) || (features.size === 0 && traceInfo.name === '__count'));
             if (active) {
-                trace.date = new Date();
+                traceInfo.date = new Date();
             }
-            trace.active = active;
+            traceInfo.active = active;
         });
 
 
@@ -2146,7 +2181,7 @@ function getNewEmbeddingData(state, features) {
                     embedding.categoryToIndices = categoryToIndices;
                 }
 
-                const trace = {
+                let chartData = {
                     embedding: Object.assign({}, embedding),
                     name: feature,
                     featureType: featureType,
@@ -2156,29 +2191,29 @@ function getNewEmbeddingData(state, features) {
                     dimensions: z != null ? 3 : 2,
                     date: new Date(),
                     active: true,
-					psize: state,
+                    psize: state.dataset.psize,
                     colorScale: colorScale,
                     continuous: !isCategorical,
                     isCategorical: isCategorical,
                     values: values, // for color
                     type: traceType
                 };
-                if (trace.mode != null) {
-                    trace.index = coordinates[embedding.name + '_index'];
-                    trace._values = trace.values;
-                    trace.values = summarizeDensity(trace.values, trace.index, selection, trace.continuous ? 'max' : 'mode');
+                if (chartData.mode != null) {
+                    chartData.index = coordinates[embedding.name + '_index'];
+                    chartData._values = chartData.values;
+                    chartData.values = summarizeDensity(chartData.values, chartData.index, selection, chartData.continuous ? 'max' : 'mode');
                 }
                 if (traceType === TRACE_TYPE_SCATTER) {
-                    trace.positions = getPositions(trace);
+                    chartData.positions = getPositions(chartData);
                 }
                 if (traceType === TRACE_TYPE_META_IMAGE) {
                     const svg = cachedData[getEmbeddingKey(embedding)];
-                    trace.source = svg.cloneNode(true);
-                    trace.zscore = true;
-                    trace.gallerySource = svg.cloneNode(true);
-                    trace.categoryToIndices = embedding.categoryToIndices;
+                    chartData.source = svg.cloneNode(true);
+                    chartData.zscore = true;
+                    chartData.gallerySource = svg.cloneNode(true);
+                    chartData.categoryToIndices = embedding.categoryToIndices;
 
-                    if (trace.continuous) {
+                    if (chartData.continuous) {
                         // compute mean and standard deviation
                         colorScale.domain([-3, 3]);
                         let mean = 0;
@@ -2186,7 +2221,7 @@ function getNewEmbeddingData(state, features) {
                         for (let category in embedding.categoryToIndices) {
                             const indices = embedding.categoryToIndices[category];
                             for (let i = 0, n = indices.length; i < n; i++) {
-                                mean += trace.values[indices[i]];
+                                mean += chartData.values[indices[i]];
                                 count++;
                             }
                         }
@@ -2195,33 +2230,33 @@ function getNewEmbeddingData(state, features) {
                         for (let category in embedding.categoryToIndices) {
                             const indices = embedding.categoryToIndices[category];
                             for (let i = 0, n = indices.length; i < n; i++) {
-                                let diff = trace.values[indices[i]] - mean;
+                                let diff = chartData.values[indices[i]] - mean;
                                 diff = diff * diff;
                                 sum += diff;
                             }
                         }
                         const n = count - 1;
                         const variance = sum / n;
-                        trace.mean = mean;
-                        trace.stdev = Math.sqrt(variance);
+                        chartData.mean = mean;
+                        chartData.stdev = Math.sqrt(variance);
                     }
-                    trace.fullCategoryToStats = createCategoryToStats(trace, new Set());
-                    trace.categoryToStats = state.selection.size != null && state.selection.size === 0 ? trace.fullCategoryToStats : createCategoryToStats(trace, state.selection);
+                    chartData.fullCategoryToStats = createCategoryToStats(chartData, new Set());
+                    chartData.categoryToStats = state.selection.size != null && state.selection.size === 0 ? chartData.fullCategoryToStats : createCategoryToStats(chartData, state.selection);
                 }
-                updateTraceColors(trace);
+                updateTraceColors(chartData);
 
                 if (traceType === TRACE_TYPE_IMAGE) {
                     // TODO cache image
-                    trace.indices = !isCategorical ? indexSort(values, true) : randomSeq(values.length);
+                    chartData.indices = !isCategorical ? indexSort(values, true) : randomSeq(values.length);
                     const url = dataset.api.getFileUrl(embedding.spatial.image);
-                    trace.tileSource = new OpenSeadragon.ImageTileSource({
+                    chartData.tileSource = new OpenSeadragon.ImageTileSource({
                         url: url,
                         buildPyramid: true,
                         crossOriginPolicy: "Anonymous"
                     });
                 }
 
-                newEmbeddingData.push(trace);
+                newEmbeddingData.push(chartData);
             }
         });
     });
@@ -2306,9 +2341,15 @@ export function getDatasetStateJson(state) {
         if (value !== defaultChartOptions[key]) {
             jsonChartOptions[key] = value;
         }
-    }
+    } 
+    json.pointSize=2;
+    //DEFAULT_POINT_SIZE=2;
     if (pointSize !== DEFAULT_POINT_SIZE) {
         json.pointSize = pointSize;
+	//let d2=intFormat(dataset[0])
+	//if( d2 < 10000){
+	//     json.pointSize=2;
+	//}
     }
 
 

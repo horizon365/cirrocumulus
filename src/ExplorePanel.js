@@ -21,7 +21,7 @@ import React, {useState} from 'react';
 import withStyles from '@mui/styles/withStyles';
 import {
     deleteFeatureSet,
-    deleteLink,
+    deleteView,
     downloadSelectedIds,
     getDatasetFilterNames,
     getEmbeddingKey,
@@ -354,7 +354,7 @@ function ExplorePanel(props) {
     function onFeatureClick(event, option) {
         event.stopPropagation();
         const value = option.id !== undefined ? option.id : option;
-        let galleryTraces = embeddingData.filter(trace => trace.active);
+        let galleryTraces = embeddingData.filter(traceInfo => traceInfo.active);
         for (let i = 0; i < galleryTraces.length; i++) {
             if (galleryTraces[i].name === value) {
                 if (props.tab !== 'embedding') {
@@ -444,7 +444,7 @@ function ExplorePanel(props) {
         </Menu>}
         <div style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? null : {display: 'none'}}>
             <Typography gutterBottom={false} component={"h1"}
-                        style={{textTransform: 'uppercase', letterSpacing: '0.1em'}}>Explore</Typography>
+                        style={{textTransform: 'capitalize'}}>Explore</Typography>
             {embeddingOptions.length > 0 &&
             <FormControl sx={{display: 'block'}}>
                 <AutocompleteVirtualized label={"Embeddings"}
@@ -468,7 +468,7 @@ function ExplorePanel(props) {
                                          groupBy={(option) => option.group}
                                          onChange={onFeaturesChange}
                                          getOptionLabel={(option) => option.text}
-                                         helperText={"Enter or paste list"}
+                                         //helperText={"Enter or paste list"}
 
                 />
                 <div><Link
@@ -576,7 +576,7 @@ function ExplorePanel(props) {
             style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? {maxHeight: 500} : {display: 'none'}}>
             <Divider inset="true"/>
             <Typography gutterBottom={false} component={"h1"}
-                        style={{textTransform: 'uppercase'}}>Filters</Typography>
+                        style={{textTransform: 'capitalize'}}>Filters</Typography>
             <Grid alignContent={"flex-start"} container alignItems="center"
                   spacing={0}>
                 <Grid item><InputLabel shrink={true}>Combine</InputLabel></Grid>
@@ -678,7 +678,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(setSearchTokens(value));
         },
         handleDeleteView: value => {
-            dispatch(deleteLink(value));
+            dispatch(deleteView(value));
         },
         handleDeleteFeatureSet: value => {
             dispatch(deleteFeatureSet(value));

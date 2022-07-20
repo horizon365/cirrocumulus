@@ -171,7 +171,7 @@ function JobPanel(props) {
             <div style={tab === 'embedding' ? null : {display: 'none'}}>
                 <Divider/>
                 <Typography gutterBottom={false} component={"h1"}
-                            style={{textTransform: 'uppercase'}}>Compare</Typography>
+                            style={{textTransform: 'capitalize'}}>Compare</Typography>
 
                 <FormControl className={classes.formControl}>
                     <InputLabel htmlFor="comparison_select">Comparisons</InputLabel>

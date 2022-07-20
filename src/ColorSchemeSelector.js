@@ -54,6 +54,7 @@ function ColorSchemeSelector(props) {
         interpolator.reversed = false;
     }
     const interpolatorName = interpolator == null ? 'interpolateViridis' : fixInterpolatorName(interpolator.name);
+    //const interpolatorName = interpolator == null ? 'interpolateReds' : fixInterpolatorName(interpolator.name);
     const _width = width || 176;
     const height = 14;
     return <>

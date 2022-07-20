@@ -253,7 +253,7 @@ export function updateScatterChart(scatterPlot, trace, selection, markerOpacity,
         positions = positions.slice();
     }
     const scale = new Float32Array(trace.values.length);
-	const psize = trace.psize.dataset.psize;
+	const psize = trace.psize;
 	if(pointSize == 1.1){
 		if(psize){
 			pointSize = psize;

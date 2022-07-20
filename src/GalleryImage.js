@@ -21,7 +21,7 @@ function getImageUrl(cachedData,
                      obsCat,
                      pointSize,
                      selection,
-                     trace,
+                     traceInfo,
                      unselectedMarkerOpacity) {
     let canvas = document.createElement('canvas');
     canvas.width = chartSize * window.devicePixelRatio;
@@ -31,7 +31,7 @@ function getImageUrl(cachedData,
     drawEmbeddingImage(context, {
         width: chartSize,
         height: chartSize
-    }, trace, selection, markerOpacity, unselectedMarkerOpacity, chartOptions, categoricalNames, obsCat, cachedData, getSpotRadius(trace, pointSize));
+    }, traceInfo, selection, markerOpacity, unselectedMarkerOpacity, chartOptions, categoricalNames, obsCat, cachedData, getSpotRadius(traceInfo, pointSize));
     return canvas.toDataURL();
 }
 
@@ -44,7 +44,7 @@ export default function GalleryImage(props) {
 
     function onSelect(event) {
         event.preventDefault();
-        props.onSelect(props.trace);
+        props.onSelect(props.traceInfo);
     }
 
     const {
@@ -59,47 +59,45 @@ export default function GalleryImage(props) {
         pointSize,
         scatterPlot,
         selection,
-        trace,
+        traceInfo,
         unselectedMarkerOpacity,
         unselectedPointSize
     } = props;
 
     useEffect(() => {
-        if (trace.type === 'scatter' && trace.embedding.mode == null) {
-            let spriteVisualizer;
-            if (scatterPlot && (spriteVisualizer = getVisualizer(scatterPlot, POINT_VISUALIZER_ID))) {
-                spriteVisualizer.zoomFactor = getScaleFactor(primaryChartSize);
+        if (traceInfo.type === 'scatter' && traceInfo.embedding.mode == null) {
+            let spriteVisualizer = getVisualizer(scatterPlot, POINT_VISUALIZER_ID);
+            spriteVisualizer.zoomFactor = getScaleFactor(primaryChartSize);
 
-                updateScatterChart(scatterPlot, trace, selection, markerOpacity, unselectedMarkerOpacity, pointSize, unselectedPointSize,
-                    categoricalNames, chartOptions, obsCat, cachedData, trace.camera);
+            updateScatterChart(scatterPlot, traceInfo, selection, markerOpacity, unselectedMarkerOpacity, pointSize, unselectedPointSize,
+                categoricalNames, chartOptions, obsCat, cachedData, traceInfo.camera);
 
-                const canvas = containerElement.querySelector('canvas');
-                const showLabels = obsCat.length > 0 && chartOptions.showGalleryLabels;
-                let overlayUrl = null;
-                if (showLabels) {
-                    const labelsPositions = getCategoryLabelsPositions(trace.embedding, obsCat, cachedData);
-                    const labelCanvas = document.createElement('canvas');
-                    labelCanvas.width = chartSize * window.devicePixelRatio;
-                    labelCanvas.height = chartSize * window.devicePixelRatio;
-                    const context = labelCanvas.getContext('2d');
-                    context.scale(window.devicePixelRatio, window.devicePixelRatio);
-                    context.font = 'bold ' + chartOptions.labelFontSize + 'px Roboto Condensed';
-                    drawLabels(context, getLabels(obsCat, labelsPositions.labels, categoricalNames), labelsPositions.positions, chartOptions, {
-                        width: chartSize,
-                        height: chartSize
-                    }, scatterPlot.camera);
-                    overlayUrl = labelCanvas.toDataURL();
-                }
-                setUrl(canvas.toDataURL());
-                setOverlayUrl(overlayUrl);
-                setLoading(false);
+            const canvas = containerElement.querySelector('canvas');
+            const showLabels = obsCat.length > 0 && chartOptions.showGalleryLabels;
+            let overlayUrl = null;
+            if (showLabels) {
+                const labelsPositions = getCategoryLabelsPositions(traceInfo.embedding, obsCat, cachedData);
+                const labelCanvas = document.createElement('canvas');
+                labelCanvas.width = chartSize * window.devicePixelRatio;
+                labelCanvas.height = chartSize * window.devicePixelRatio;
+                const context = labelCanvas.getContext('2d');
+                context.scale(window.devicePixelRatio, window.devicePixelRatio);
+                context.font = 'bold ' + chartOptions.labelFontSize + 'px Roboto Condensed';
+                drawLabels(context, getLabels(obsCat, labelsPositions.labels, categoricalNames), labelsPositions.positions, chartOptions, {
+                    width: chartSize,
+                    height: chartSize
+                }, scatterPlot.camera);
+                overlayUrl = labelCanvas.toDataURL();
             }
-        } else if (trace.type === 'image') {
-            if (!trace.tileSource.ready) {
+            setUrl(canvas.toDataURL());
+            setOverlayUrl(overlayUrl);
+            setLoading(false);
+        } else if (traceInfo.type === 'image') {
+            if (!traceInfo.tileSource.ready) {
                 setUrl(null);
                 setOverlayUrl(null);
                 setLoading(true);
-                trace.tileSource.addOnceHandler('ready', () => {
+                traceInfo.tileSource.addOnceHandler('ready', () => {
                     setLoading(false);
                     setUrl(getImageUrl(cachedData,
                         categoricalNames,
@@ -109,7 +107,7 @@ export default function GalleryImage(props) {
                         obsCat,
                         pointSize,
                         selection,
-                        trace,
+                        traceInfo,
                         unselectedMarkerOpacity));
                 });
             } else {
@@ -121,7 +119,7 @@ export default function GalleryImage(props) {
                     obsCat,
                     pointSize,
                     selection,
-                    trace,
+                    traceInfo,
                     unselectedMarkerOpacity));
                 setOverlayUrl(null);
                 setLoading(false);
@@ -129,7 +127,7 @@ export default function GalleryImage(props) {
         } else {
             const containerElement = elementRef.current;
             containerElement.innerHTML = '';
-            const svg = trace.gallerySource;
+            const svg = traceInfo.gallerySource;
             svg.setAttribute('width', chartSize);
             svg.setAttribute('height', chartSize);
             containerElement.append(svg);
@@ -138,10 +136,10 @@ export default function GalleryImage(props) {
             setLoading(false);
         }
 
-    }, [containerElement, primaryChartSize, cachedData, categoricalNames, chartOptions, chartSize, markerOpacity, obsCat, pointSize, scatterPlot, selection, trace, unselectedMarkerOpacity, unselectedPointSize]);
+    }, [containerElement, primaryChartSize, cachedData, categoricalNames, chartOptions, chartSize, markerOpacity, obsCat, pointSize, scatterPlot, selection, traceInfo, unselectedMarkerOpacity, unselectedPointSize]);
 
 
-    let name = props.trace.name;
+    let name = props.traceInfo.name;
     if (name === '__count') {
         name = '';
     }
@@ -155,7 +153,7 @@ export default function GalleryImage(props) {
                 height: props.chartSize,
                 cursor: 'pointer'
             }}>
-                <Tooltip title={"Embedding: " + props.trace.embedding.name}>
+                <Tooltip title={"Embedding: " + props.traceInfo.embedding.name}>
                     <Typography color="textPrimary" variant={"caption"}
                                 onClick={onSelect}
                                 style={{
@@ -171,24 +169,24 @@ export default function GalleryImage(props) {
                 <div onClick={onSelect} ref={elementRef}
                      style={{position: 'absolute', left: 0, top: 0}}></div>
                 {url &&
-                    <div style={{position: 'absolute', left: 0, top: 0}}>
-                        <img alt="" src={url}
-                             width={props.chartSize * window.devicePixelRatio}
-                             height={props.chartSize * window.devicePixelRatio}
-                             onClick={onSelect}
-                             style={{
-                                 width: props.chartSize,
-                                 height: props.chartSize
-                             }}/>
-                    </div>}
+                <div style={{position: 'absolute', left: 0, top: 0}}>
+                    <img alt="" src={url}
+                         width={props.chartSize * window.devicePixelRatio}
+                         height={props.chartSize * window.devicePixelRatio}
+                         onClick={onSelect}
+                         style={{
+                             width: props.chartSize,
+                             height: props.chartSize
+                         }}/>
+                </div>}
                 {overlayUrl &&
-                    <div style={{position: 'absolute', left: 0, top: 0}}>
-                        <img alt="" src={overlayUrl}
-                             onClick={onSelect}
-                             style={{
-                                 width: props.chartSize,
-                                 height: props.chartSize
-                             }}/></div>}
+                <div style={{position: 'absolute', left: 0, top: 0}}>
+                    <img alt="" src={overlayUrl}
+                         onClick={onSelect}
+                         style={{
+                             width: props.chartSize,
+                             height: props.chartSize
+                         }}/></div>}
 
 
             </div>

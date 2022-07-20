@@ -278,11 +278,9 @@ export class ScatterPlotVisualizerSprites implements ScatterPlotVisualizer {
     }
 
     private disposeSpriteSheet() {
-        this.standinTextureForPoints.dispose();
-        this.renderMaterial.dispose();
+
         (this.renderMaterial as any) = null;
     }
-
 
     setScene(scene: Scene) {
         this.scene = scene;

@@ -251,35 +251,20 @@ function ScatterChartThree(props) {
                 const selectedIndex = getSelectedIndex(point);
                 if (selectedIndex !== -1) {
                     let value = trace.values[selectedIndex];
+                    let categoryObject = categoricalNames[trace.name] || {};
+                    let renamedValue = categoryObject[value];
+                    if (renamedValue != null && renamedValue.newValue != null) {
+                        value = renamedValue.newValue;
+                    }
+
                     if (typeof value === 'number') {
                         value = numberFormat2f(value);
                         if (value.endsWith('.00')) {
                             value = value.substring(0, value.lastIndexOf('.'));
                         }
                     }
-                    let categoryObject = categoricalNames[trace.name] || {};
-                    let renamedValue = categoryObject[value];
-					let xp=trace.x[selectedIndex];
-					let yp=trace.y[selectedIndex];
-					if(trace.psize.dataset.indexm){
-					let ids = trace.psize.dataset.indexm;
-					let id = ids[selectedIndex];
-                    if (renamedValue != null && renamedValue.newValue != null) {
-                        value = renamedValue.newValue;
-                    }
-
-					let is3d = trace.dimensions === 3;
-					if (is3d){
-						let zp=trace.z[selectedIndex];
-						setTip({html: '' + value+'<br>'+xp+','+yp+','+zp+'<br>'+id, clientX: event.clientX, clientY: event.clientY});
-					} else {
-					 	setTip({html: '' + value+'<br>'+xp+','+yp+'<br>'+id, clientX: event.clientX, clientY: event.clientY});
-                    }
-					}else{
-						setTip({html: '' + value, clientX: event.clientX, clientY: event.clientY});
-					}
-                    //setTip({html: '' + value, clientX: event.clientX, clientY: event.clientY});
-                    //updateTooltipText(tip, '' + value, event);
+                    setTip({html: '' + value, clientX: event.clientX, clientY: event.clientY});
+                    // updateTooltipText(tip, '' + value, event);
                 } else {
                     setTip({html: ''});
                     // updateTooltipText(tip, '', event);
@@ -598,7 +583,7 @@ function ScatterChartThree(props) {
                 showAxis={chartOptions.showAxis}/>
         </div>
         <div data-testid="scatter-chart-three" style={{
-            display: 'flex',
+            display: 'inline-block',
             width: chartSize.width,
             height: chartSize.height
         }}

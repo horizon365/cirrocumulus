@@ -36,7 +36,7 @@ export function EditableColorScheme(props) {
         onInterpolator(Object.assign({}, interpolator, {reversed: event.target.checked}));
     }
 
-    const updateMinDebounced = useMemo(() => debounce(updateMin, 500), []);
+    const updateMinDebounced = useMemo(() => debounce(updateMin, 5000), []);
     const updateMaxDebounced = useMemo(() => debounce(updateMax, 500), []);
 
     useEffect(() => {
@@ -75,6 +75,37 @@ export function EditableColorScheme(props) {
     return <>
         <ColorSchemeSelector handleInterpolator={onInterpolator}
                              interpolator={interpolator}/>
+        <>
+            <div style={{color: textColor, width: width}}><Typography
+                variant={"caption"}>{colorMin}</Typography><Typography
+                variant={"caption"}
+                style={{float: 'right'}}>{colorMax}</Typography></div>
+            <InputLabel disabled={domain == null} shrink={true} variant={"standard"}>Custom Color
+                Range</InputLabel>
+            <TextField
+                InputLabelProps={{shrink: true}} style={{width: 90, marginRight: 4}}
+                size="small" type="text"
+                disabled={domain == null}
+                onChange={handleMin} label={"Min"}
+                value={min}/>
+            <TextField InputLabelProps={{shrink: true}} style={{width: 90}} size="small"
+                       type="text"
+                       disabled={domain == null}
+                       onChange={handleMax} label={"Max"}
+                       value={max}/>
+        </>
+        <Tooltip title={"Select to invert the color order"}>
+            <div><FormControlLabel
+                control={
+                    <Switch
+                        disabled={domain == null}
+                        checked={interpolator == null ? false : interpolator.reversed}
+                        onChange={onReversedChange}
+                    />
+                }
+                label="Reverse Colors"
+            /></div>
+        </Tooltip>
     </>;
 
 }

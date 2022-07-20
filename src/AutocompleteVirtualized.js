@@ -44,14 +44,14 @@ function renderRow(props) {
         inlineStyle.whiteSpace = 'nowrap';
         const textMatch = dataSet.inputValue != null ? getTextMatch(dataSet.group, dataSet.inputValue) : null;
         if (textMatch) {
-            return <Typography component="li" {...dataSet[0]} style={inlineStyle}>
+            return <Typography component="li" {...dataSet[0]} title={dataSet.group} noWrap style={inlineStyle}>
                 {textMatch[0]}<b>{textMatch[1]}</b>{textMatch[2]} {dataSet.selectGroup && <Link href="#"
-                                                                                                onClick={e => dataSet.selectGroup(e, dataSet.group)}>All</Link>}
+                                                                                                onClick={e => dataSet.selectGroup(e, dataSet.group)}><br/>All</Link>}
             </Typography>;
         }
-        return <Typography component="li" {...dataSet[0]} style={inlineStyle}>
+        return <Typography component="li" {...dataSet[0]} title={dataSet.group} noWrap style={inlineStyle}>
             {dataSet.group} {dataSet.selectGroup &&
-            <Link href="#" onClick={e => dataSet.selectGroup(e, dataSet.group)}>All</Link>}
+            <Link href="#" onClick={e => dataSet.selectGroup(e, dataSet.group)}><br/>All</Link>}
         </Typography>;
 
     }
@@ -111,7 +111,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
 
     const getChildSize = (child) => {
         if (child.hasOwnProperty('group')) {
-            return child.group === '' ? 0 : 30;
+            return child.group === '' ? 0 : 45;
         }
 
         return itemSize;
@@ -218,7 +218,8 @@ export default function AutocompleteVirtualized(props) {
             event.preventDefault();
             event.stopPropagation();
             text = text.trim();
-            enterTokens(event, text.split(/[\n,\t]/));
+            let tokens = text.split(/[\n,\t]/);
+            enterTokens(event, tokens);
         }
     }
 
@@ -402,6 +403,7 @@ export default function AutocompleteVirtualized(props) {
             onSortEnd={onSortEnd}
             axis="xy" items={props.value}
         />}
+
     </>;
 };
 

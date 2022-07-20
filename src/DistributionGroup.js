@@ -356,6 +356,41 @@ class DistributionGroup extends React.PureComponent {
                                          onMinUIChange={this.onMinUIChange}
                                          onMaxUIChange={this.onMaxUIChange}
                     />}
+                {chartType !== 'violin' && <FormControl className={this.props.classes.formControl}>
+                    <InputLabel>Standardize</InputLabel>
+                    <Select
+                        label={"Standardize"}
+                        size={"small"}
+                        onChange={event => this.props.onColorScalingChange(event.target.value)}
+                        value={interpolator.scale}
+                    >
+                        <MenuItem value={"none"} divider>(None)</MenuItem>
+                        <MenuItem title={"Standardize features between 0 and 1"}
+                                  value={INTERPOLATOR_SCALING_MIN_MAX_FEATURE}>Feature</MenuItem>
+                        <MenuItem title={"Standardize groups between 0 and 1"}
+                                  value={INTERPOLATOR_SCALING_MIN_MAX_CATEGORY}>Category</MenuItem>
+                    </Select>
+                </FormControl>}
+                {chartType === 'dotplot' && <div style={{paddingTop: 16}}>
+                    <InputLabel shrink={true}>Size</InputLabel>
+                    <EditableSizeLegend sizeScale={sizeScale} textColor={textColor}
+                                        onOptions={this.props.onDistributionPlotOptions} showReversed={false}/>
+                </div>}
+                <FormControl className={this.props.classes.formControl}>
+                    <InputLabel shrink={true}>Sort By</InputLabel>
+                    <Select
+                        label={"Sort By"}
+                        size={"small"}
+                        onChange={this.onSortOrderChanged}
+                        value={distributionPlotOptions.sortBy}
+                    >
+                        {sortChoices.map(item => (
+                            <MenuItem key={item} value={item}>{item}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+
+
                 {chartType === 'violin' && <FormControl className={this.props.classes.formControl}>
                     <InputLabel id="violin-scale-label">Scale</InputLabel>
                     <Select
@@ -374,6 +409,34 @@ class DistributionGroup extends React.PureComponent {
                         maximum
                         width.</FormHelperText>
                 </FormControl>}
+
+                {chartType === 'violin' && <div><FormControlLabel
+                    control={
+                        <Switch
+                            value={"violinShowBoxplot"}
+                            checked={distributionPlotOptions.violinShowBoxplot}
+                            onChange={this.onViolinShowBoxplot}
+                        />
+                    }
+                    label="Show Box Plot"
+                /></div>}
+
+                <FormControl className={this.props.classes.formControl}>
+                    <InputLabel id="dist-chart-type-label">Chart Type</InputLabel>
+                    <Select
+                        label={"Chart Type"}
+                        size={"small"}
+                        className={this.props.classes.select}
+                        labelId="dist-chart-type-label"
+                        value={chartType}
+                        onChange={this.onChartTypeChange}
+                    >
+                        {this.props.showDotPlotOption && <MenuItem value={'heatmap'}>Heatmap</MenuItem>}
+                        <MenuItem value={'dotplot'}>Dot Plot</MenuItem>
+                        <MenuItem value={'violin'}>Violin</MenuItem>
+                    </Select>
+                </FormControl>
+
             </Box>
         );
     }

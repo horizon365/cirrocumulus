@@ -21,6 +21,7 @@ import {
     setDrawerOpen,
     setMessage
 } from './actions';
+import AppHeader from './AppHeader';
 import CompositionPlots from './CompositionPlots';
 import DeleteDatasetDialog from './DeleteDatasetDialog';
 import DistributionPlots from './DistributionPlots';
@@ -29,6 +30,7 @@ import EditNewDatasetDialog from './EditNewDatasetDialog';
 import EmbeddingChart from './EmbeddingChart';
 import GalleryCharts from './GalleryCharts';
 import HelpDialog from './HelpDialog';
+
 import LandingPage from './LandingPage';
 import SaveDatasetFilterDialog from './SaveDatasetViewDialog';
 import SaveSetDialog from './SaveSetDialog';
@@ -36,7 +38,11 @@ import SideBar from './SideBar';
 import {COMPARE_ACTIONS} from './job_config';
 import {withTheme} from '@emotion/react';
 import JobResultPanel from './JobResultPanel';
+
+
 export const drawerWidth = 240;
+
+
 function App(props) {
     const galleryRef = useRef();
     const {drawerOpen, theme, dataset, dialog, loading, loadingApp, message, setMessage, tab} = props;
@@ -44,23 +50,54 @@ function App(props) {
     function handleMessageClose() {
         setMessage(null);
     }
+
+
     function onGallery() {
         window.scrollTo(0, galleryRef.current.offsetTop);
     }
+
+
+    // tabs: 1. embedding, 2. grouped table with kde per feature, dotplot
+    // need to add filter, selection
+
     const color = theme.palette.primary.main;
     const footerBackground = theme.palette.background.paper;
     return (
-        <Box scomponent="main" sx={{backgroundColor: footerBackground}}>
+        <Box sx={{display: 'flex', backgroundColor: footerBackground}}>
             {(dialog === EDIT_DATASET_DIALOG || dialog === IMPORT_DATASET_DIALOG) &&
                 <EditNewDatasetDialog/>}
             {dialog === DELETE_DATASET_DIALOG && <DeleteDatasetDialog/>}
             {dialog === SAVE_DATASET_FILTER_DIALOG && <SaveDatasetFilterDialog/>}
             {dialog === HELP_DIALOG && <HelpDialog/>}
             {dialog === SAVE_FEATURE_SET_DIALOG && <SaveSetDialog/>}
+            <AppHeader/>
+            <Drawer
+                open={drawerOpen}
+                variant="persistent"
+                sx={{
+                    width: drawerOpen ? drawerWidth : null,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: drawerOpen ? drawerWidth : null,
+                        boxSizing: 'border-box'
+                    }
+                }}
+            >
+                <Toolbar/>
+                {dataset != null && <SideBar key={dataset.id} compareActions={COMPARE_ACTIONS}/>}
+            </Drawer>
+            <Box scomponent="main"
+                 sx={{flexGrow: 1, marginLeft: 1, paddingBottom: 24, color: color, backgroundColor: footerBackground}}>
+                <Toolbar/>
+                {loadingApp.loading &&
+                    <div><h2>Loading<LinearProgress style={{width: '90%'}} variant="determinate"
+                                                    value={loadingApp.progress}/></h2>
+                    </div>}
+
                 {dataset == null && tab === 'embedding' && !loading && !loadingApp.loading &&
                     <div><LandingPage/></div>}
                 {<>
-					{dataset != null && <div
+                    {dataset != null && <div
                         role="tabpanel"
                         hidden={tab !== 'embedding'}
                     >
@@ -76,11 +113,27 @@ function App(props) {
                     >
                         {<DistributionPlots/>}
                     </div>}
+                    {dataset != null && <div
+                        role="tabpanel"
+                        hidden={tab !== 'composition'}
+                    >
+                        {<CompositionPlots/>}
+                    </div>}
+                    {dataset != null && <div
+                        role="tabpanel"
+                        hidden={tab !== 'results'}
+                    >
+                        {<JobResultPanel/>}
+                    </div>}
                 </>}
+            </Box>
+
             {loading && <Dialog aria-labelledby="loading-dialog-title" open={true}>
                 <DialogTitle id="loading-dialog-title"><CircularProgress
                     size={20}/> Loading...</DialogTitle>
             </Dialog>}
+
+
             {message != null && <Snackbar
                 anchorOrigin={{
                     vertical: 'bottom',
@@ -110,6 +163,7 @@ function App(props) {
     );
 
 }
+
 const mapStateToProps = state => {
     return {
         dataset: state.dataset,
@@ -134,6 +188,7 @@ const mapDispatchToProps = dispatch => {
         }
     };
 };
+
 export default withTheme(connect(
     mapStateToProps, mapDispatchToProps
 )(App));

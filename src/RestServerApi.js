@@ -1,7 +1,6 @@
 // general server stuff
 
 import {API, getIdToken} from './actions';
-import {isArray} from 'lodash';
 
 export class RestServerApi {
 
@@ -27,7 +26,7 @@ export class RestServerApi {
                 body: JSON.stringify(
                     {id: datasetId}),
                 method: 'DELETE',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             });
     }
 
@@ -37,7 +36,7 @@ export class RestServerApi {
         for (let key in data) {
             let value = data[key];
             if (value != null) {
-                if (isArray(value)) {
+                if (key == 'readers') {
                     value = JSON.stringify(value);
                 }
                 formData.append(key, value);
@@ -64,7 +63,7 @@ export class RestServerApi {
         return fetch(API + '/dataset?id=' + datasetId,
             {
                 method: 'GET',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(result => result.json());
     }
 
@@ -73,7 +72,7 @@ export class RestServerApi {
     getCategoryNamesPromise(datasetId) {
         return fetch(API + '/category_name?id=' + datasetId,
             {
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(result => result.json());
     }
 
@@ -82,7 +81,7 @@ export class RestServerApi {
             {
                 body: JSON.stringify(data),
                 method: 'PUT',
-                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getIdToken()},
             });
     }
 
@@ -90,7 +89,7 @@ export class RestServerApi {
     getViewsPromise(datasetId) {
         return fetch(API + '/views?id=' + datasetId,
             {
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(result => result.json());
     }
 
@@ -99,7 +98,7 @@ export class RestServerApi {
             {
                 body: JSON.stringify(data),
                 method: isUpdate ? 'PUT' : 'POST',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(response => response.json());
     }
 
@@ -108,14 +107,14 @@ export class RestServerApi {
             {
                 body: JSON.stringify({id: viewId, ds_id: datasetId}),
                 method: 'DELETE',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             });
     }
 
     getViewPromise(viewId) {
         return fetch(API + '/view?id=' + viewId,
             {
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(response => response.json());
     }
 
@@ -125,7 +124,7 @@ export class RestServerApi {
             {
                 body: JSON.stringify(data),
                 method: isUpdate ? 'PUT' : 'POST',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(response => response.json());
     }
 
@@ -134,13 +133,13 @@ export class RestServerApi {
             {
                 body: JSON.stringify({id: setId, ds_id: datasetId}),
                 method: 'DELETE',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             });
     }
 
     exportDatasetFiltersPromise(datasetId) {
         return fetch(API + '/export_filters?id=' + datasetId, {
-            headers: {'Authorization': 'Bearer ' + getIdToken()}
+            headers: {'Authorization': 'Bearer ' + getIdToken()},
         }).then(result => {
             if (!result.ok) {
                 return null;
@@ -155,7 +154,7 @@ export class RestServerApi {
             {
                 body: JSON.stringify(data),
                 method: 'POST',
-                headers: {'Authorization': 'Bearer ' + getIdToken()}
+                headers: {'Authorization': 'Bearer ' + getIdToken()},
             }).then(response => response.json());
     }
 

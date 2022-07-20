@@ -76,7 +76,7 @@ import {
 
 
 export const DIST_PLOT_OPTIONS = {
-    chartType: 'dotplot',
+    chartType: 'heatmap',
     violinScale: 'width',
     violinHeight: 100,
     violinWidth: 80,
@@ -102,8 +102,8 @@ const DEFAULT_DISTRIBUTION_PLOT_INTERPOLATOR_OBJ = {
     obs: Object.assign({}, DISTRIBUTION_PLOT_INTERPOLATOR_OBJ)
 };
 const DEFAULT_PRIMARY_CHART_SIZE = {
-    width: window.innerWidth-40,
-	height: window.innerHeight
+    width: window.innerWidth - 280,
+    height: Math.max(300, window.innerHeight - 370)
 };
 
 const DEFAULT_CHART_OPTIONS = {
@@ -189,7 +189,7 @@ function chartOptions(state = DEFAULT_CHART_OPTIONS, action) {
         case SET_CHART_OPTIONS:
             return Object.assign({}, action.payload);
         case RESTORE_VIEW:
-            return action.payload.chartOptions ? Object.assign({}, DEFAULT_CHART_OPTIONS, action.payload.chartOptions) : state;
+            return action.payload.chartOptions ? Object.assign({},DEFAULT_CHART_OPTIONS, action.payload.chartOptions) : state;
         default:
             return state;
     }
@@ -493,17 +493,10 @@ function loadingApp(state = {loading: false, progress: 0}, action) {
 
 // one of embedding, distribution, composition, results
 function tab(state = 'embedding', action) {
-	//const eee=Object.getOwnPropertyNames(action.type)
-	//document.write("<br>","5 ",eee);
-	//document.write("<br>","6 ",action.type);
     switch (action.type) {
         case SET_TAB:
-			//return 'distribution'
-            //return action.payload.tab? Object.assign({}, "distribution", action.payload.tab) : state;
-            return action.payload.tab? action.payload.tab : state;
+            return action.payload;
         case SET_DATASET:
-			//return 'distribution'
-            //return action.payload.tab? Object.assign({}, "distribution", action.payload.tab) : "distribution";
             return 'embedding';
         case SET_DISTRIBUTION_DATA:
             return (state === 'distribution' && action.payload.length === 0) ? 'embedding' : state;

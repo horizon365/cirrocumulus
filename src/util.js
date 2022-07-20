@@ -71,11 +71,10 @@ export const SERVER_CAPABILITY_ADD_DATASET = 'SERVER_CAPABILITY_ADD_DATASET';
 export const SERVER_CAPABILITY_DELETE_DATASET = 'SERVER_CAPABILITY_DELETE_DATASET';
 
 export const CATEGORY_20B = [
-  '#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#a65628',
-  '#f781bf', '#999999', '#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3',
-  '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3', '#8dd3c7', '#bebada',
-  '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9',
-  '#bc80bd', '#ccebc5', '#ffed6f'];
+    '#393b79', '#5254a3', '#6b6ecf',
+    '#9c9ede', '#637939', '#8ca252', '#b5cf6b', '#cedb9c', '#8c6d31',
+    '#bd9e39', '#e7ba52', '#e7cb94', '#843c39', '#ad494a', '#d6616b',
+    '#e7969c', '#7b4173', '#a55194', '#ce6dbd', '#de9ed6'];
 export const CATEGORY_20C = [
     '#3182bd', '#6baed6', '#9ecae1',
     '#c6dbef', '#e6550d', '#fd8d3c', '#fdae6b', '#fdd0a2', '#31a354',
@@ -359,7 +358,7 @@ function getColorsRgba(trace) {
 
 
     let colorScale = trace.colorScale;
-    const npoints = trace.values.length;
+    const npoints = trace.x.length;
     const colors = new Float32Array(npoints * RGBA_NUM_ELEMENTS);
 
     function rescaleRgb(c) {
@@ -418,24 +417,24 @@ function getColorsRgba(trace) {
     return colors;
 }
 
-export function updateTraceColors(trace) {
-    if (trace.type === TRACE_TYPE_IMAGE) {
+export function updateTraceColors(traceInfo) {
+    if (traceInfo.type === TRACE_TYPE_IMAGE) {
         let colors = [];
-        let colorScale = trace.colorScale;
+        let colorScale = traceInfo.colorScale;
         const colorMapper = rgb => rgb.formatHex();
-        for (let i = 0, n = trace.values.length; i < n; i++) {
-            let rgb = color(colorScale(trace.values[i]));
+        for (let i = 0, n = traceInfo.x.length; i < n; i++) {
+            let rgb = color(colorScale(traceInfo.values[i]));
             colors.push(colorMapper(rgb));
         }
-        trace.colors = colors;
-    } else if (trace.type === TRACE_TYPE_SCATTER) {
-        trace.colors = getColorsRgba(trace);
-    } else if (trace.type === TRACE_TYPE_META_IMAGE) {
-        let colorScale = trace.colorScale;
-        const svgNode = trace.source;
-        const galleryNode = trace.gallerySource;
-        const categoryToStats = trace.categoryToStats;
-        if (trace.name !== '__count') {
+        traceInfo.colors = colors;
+    } else if (traceInfo.type === TRACE_TYPE_SCATTER) {
+        traceInfo.colors = getColorsRgba(traceInfo);
+    } else if (traceInfo.type === TRACE_TYPE_META_IMAGE) {
+        let colorScale = traceInfo.colorScale;
+        const svgNode = traceInfo.source;
+        const galleryNode = traceInfo.gallerySource;
+        const categoryToStats = traceInfo.categoryToStats;
+        if (traceInfo.name !== '__count') {
             for (const category in categoryToStats) {
                 const stats = categoryToStats[category];
                 const query = category.replaceAll(' ', '_'); // FIXME
@@ -564,7 +563,7 @@ export function rankdata(values) {
 
     // Walk the sorted array, filling output array using sorted positions,
     // resolving ties as we go
-    const out = new Float32Array(ranks.length);
+    const out = new Array(ranks.length);
     let pos = 1;  // position in sorted array
     out[ranks[0].position] = pos;
     let tiesTrace = [];

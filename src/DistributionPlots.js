@@ -1,6 +1,5 @@
 import {scaleOrdinal} from 'd3-scale';
 import {schemeCategory10} from 'd3-scale-chromatic';
-import Box from '@mui/material/Box';
 import {groupBy, partial} from 'lodash';
 import React from 'react';
 import {connect} from 'react-redux';
@@ -62,12 +61,13 @@ function DistributionPlots(props) {
     return keys.map(key => {
         const name = typeToName[key] || key;
         if (distributionPlotOptions[key] == null) {
-            distributionPlotOptions[key] = Object.assign({}, DIST_PLOT_OPTIONS, {chartType: 'violin'});
+            distributionPlotOptions[key] = Object.assign({}, DIST_PLOT_OPTIONS, {chartType: 'heatmap'});
             distributionPlotInterpolator[key] = Object.assign({}, DISTRIBUTION_PLOT_INTERPOLATOR_OBJ);
         }
         let dimension2data = groupBy(distributionData[key], 'dimension');
         let dimension2selecteddata = groupBy(selectedDistributionData[key], 'dimension');
-        return <Box sx={{flexGrow: 1, marginLeft: 1, paddingBottom: 24,display: 'flex'}} key={key}>{Object.keys(dimension2data).map(dimension => {
+        return <div key={key}><Typography color="textPrimary"
+                                          variant={"h5"}>{name}</Typography>{Object.keys(dimension2data).map(dimension => {
             const data = dimension2data[dimension];
             const categoryColorScales = [];
             data[0].dimensions.forEach(dimension => {
@@ -99,7 +99,7 @@ function DistributionPlots(props) {
                                       handleInterpolator={partial(onInterpolator, key)}
                                       onColorScalingChange={partial(onColorScalingChange, key)}
                                       onDistributionPlotOptions={partial(onDistributionPlotOptionsDataType, key)}/>;
-        })}</Box>;
+        })}</div>;
     });
 
 
