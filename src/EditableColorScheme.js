@@ -80,32 +80,32 @@ export function EditableColorScheme(props) {
                 variant={"caption"}>{colorMin}</Typography><Typography
                 variant={"caption"}
                 style={{float: 'right'}}>{colorMax}</Typography></div>
-            <InputLabel disabled={domain == null} shrink={true} variant={"standard"}>Custom Color
-                Range</InputLabel>
-            <TextField
-                InputLabelProps={{shrink: true}} style={{width: 90, marginRight: 4}}
-                size="small" type="text"
-                disabled={domain == null}
-                onChange={handleMin} label={"Min"}
-                value={min}/>
-            <TextField InputLabelProps={{shrink: true}} style={{width: 90}} size="small"
-                       type="text"
-                       disabled={domain == null}
-                       onChange={handleMax} label={"Max"}
-                       value={max}/>
+            {/*<InputLabel disabled={domain == null} shrink={true} variant={"standard"}>Custom Color*/}
+            {/*    Range</InputLabel>*/}
+            {/*<TextField*/}
+            {/*    InputLabelProps={{shrink: true}} style={{width: 90, marginRight: 4}}*/}
+            {/*    size="small" type="text"*/}
+            {/*    disabled={domain == null}*/}
+            {/*    onChange={handleMin} label={"Min"}*/}
+            {/*    value={min}/>*/}
+            {/*<TextField InputLabelProps={{shrink: true}} style={{width: 90}} size="small"*/}
+            {/*           type="text"*/}
+            {/*           disabled={domain == null}*/}
+            {/*           onChange={handleMax} label={"Max"}*/}
+            {/*           value={max}/>*/}
         </>
-        <Tooltip title={"Select to invert the color order"}>
-            <div><FormControlLabel
-                control={
-                    <Switch
-                        disabled={domain == null}
-                        checked={interpolator == null ? false : interpolator.reversed}
-                        onChange={onReversedChange}
-                    />
-                }
-                label="Reverse Colors"
-            /></div>
-        </Tooltip>
+        {/*<Tooltip title={"Select to invert the color order"}>*/}
+        {/*    <div><FormControlLabel*/}
+        {/*        control={*/}
+        {/*            <Switch*/}
+        {/*                disabled={domain == null}*/}
+        {/*                checked={interpolator == null ? false : interpolator.reversed}*/}
+        {/*                onChange={onReversedChange}*/}
+        {/*            />*/}
+        {/*        }*/}
+        {/*        label="Reverse Colors"*/}
+        {/*    /></div>*/}
+        {/*</Tooltip>*/}
     </>;
 
 }

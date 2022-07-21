@@ -364,16 +364,16 @@ class SideBar extends React.PureComponent {
                         value={opacity}
                         onChange={this.onMarkerOpacityChange} aria-labelledby="continuous-slider"/>
 
-                    <InputLabel shrink={true}>Filtered Marker Opacity</InputLabel>
-                    <Slider
-                        min={0.0}
-                        max={1}
-                        step={0.01}
-                        sx={{width: 190, marginLeft: 1}}
-                        valueLabelDisplay="auto"
-                        value={unselectedOpacity}
-                        onChange={this.onUnselectedMarkerOpacityChange}
-                        aria-labelledby="continuous-slider"/>
+                    {/*<InputLabel shrink={true}>Filtered Marker Opacity</InputLabel>*/}
+                    {/*<Slider*/}
+                    {/*    min={0.0}*/}
+                    {/*    max={1}*/}
+                    {/*    step={0.01}*/}
+                    {/*    sx={{width: 190, marginLeft: 1}}*/}
+                    {/*    valueLabelDisplay="auto"*/}
+                    {/*    value={unselectedOpacity}*/}
+                    {/*    onChange={this.onUnselectedMarkerOpacityChange}*/}
+                    {/*    aria-labelledby="continuous-slider"/>*/}
 
 
                     <FormControl className={classes.formControl}>
@@ -392,47 +392,47 @@ class SideBar extends React.PureComponent {
                         </Select>
                     </FormControl>
 
-                    <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="filtered_point_size">Filtered Marker Size</InputLabel>
-                        <Select
-                            label={"Filtered Marker Size"}
-                            labelId={"filtered_point_size"}
-                            size={"small"}
-                            className={classes.select}
-                            onChange={this.onUnselectedPointSizeChange}
-                            value={unselectedPointSize}
-                            multiple={false}>
-                            {pointSizeOptions.map(item => (
-                                <MenuItem key={item.label} value={item.value}>{item.label}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    {/*<FormControl className={classes.formControl}>*/}
+                    {/*    <InputLabel htmlFor="filtered_point_size">Filtered Marker Size</InputLabel>*/}
+                    {/*    <Select*/}
+                    {/*        label={"Filtered Marker Size"}*/}
+                    {/*        labelId={"filtered_point_size"}*/}
+                    {/*        size={"small"}*/}
+                    {/*        className={classes.select}*/}
+                    {/*        onChange={this.onUnselectedPointSizeChange}*/}
+                    {/*        value={unselectedPointSize}*/}
+                    {/*        multiple={false}>*/}
+                    {/*        {pointSizeOptions.map(item => (*/}
+                    {/*            <MenuItem key={item.label} value={item.value}>{item.label}</MenuItem>*/}
+                    {/*        ))}*/}
+                    {/*    </Select>*/}
+                    {/*</FormControl>*/}
 
-                    <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="chart_size">Gallery Chart Size</InputLabel>
-                        <Select
-                            label={"Gallery Chart Size"}
-                            labelId={"chart_size"}
-                            size={"Medium"}
-                            className={classes.select}
-                            onChange={this.onChartSizeChange}
-                            value={chartSize}
-                            multiple={false}>
-                            {gallerySizeOptions.map(item => (
-                                <MenuItem key={item.label} value={item.value}>{item.label}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    {/*<FormControl className={classes.formControl}>*/}
+                    {/*    <InputLabel htmlFor="chart_size">Gallery Chart Size</InputLabel>*/}
+                    {/*    <Select*/}
+                    {/*        label={"Gallery Chart Size"}*/}
+                    {/*        labelId={"chart_size"}*/}
+                    {/*        size={"Medium"}*/}
+                    {/*        className={classes.select}*/}
+                    {/*        onChange={this.onChartSizeChange}*/}
+                    {/*        value={chartSize}*/}
+                    {/*        multiple={false}>*/}
+                    {/*        {gallerySizeOptions.map(item => (*/}
+                    {/*            <MenuItem key={item.label} value={item.value}>{item.label}</MenuItem>*/}
+                    {/*        ))}*/}
+                    {/*    </Select>*/}
+                    {/*</FormControl>*/}
 
-                    <div><FormControlLabel
-                        control={
-                            <Switch
-                                checked={chartOptions.showGalleryLabels}
-                                onChange={this.onShowGalleryLabelsChange}
-                            />
-                        }
-                        label="Gallery Labels"
-                    /></div>
+                    {/*<div><FormControlLabel*/}
+                    {/*    control={*/}
+                    {/*        <Switch*/}
+                    {/*            checked={chartOptions.showGalleryLabels}*/}
+                    {/*            onChange={this.onShowGalleryLabelsChange}*/}
+                    {/*        />*/}
+                    {/*    }*/}
+                    {/*    label="Gallery Labels"*/}
+                    {/*/></div>*/}
 
 
                     <EditableColorScheme
@@ -446,27 +446,27 @@ class SideBar extends React.PureComponent {
                         onMaxUIChange={this.onMaxUIChange}
                         onInterpolator={this.onInterpolator}/>
 
-                    <FormControl className={classes.formControl}>
-                        <TextField
-                            value={this.state.labelFontSize}
-                            onChange={this.onLabelFontSize}
-                            size="small"
-                            InputLabelProps={{shrink: true}}
-                            fullWidth
-                            label="Label Font Size"
-                        />
-                    </FormControl>
+                    {/*<FormControl className={classes.formControl}>*/}
+                    {/*    <TextField*/}
+                    {/*        value={this.state.labelFontSize}*/}
+                    {/*        onChange={this.onLabelFontSize}*/}
+                    {/*        size="small"*/}
+                    {/*        InputLabelProps={{shrink: true}}*/}
+                    {/*        fullWidth*/}
+                    {/*        label="Label Font Size"*/}
+                    {/*    />*/}
+                    {/*</FormControl>*/}
 
-                    <FormControl className={classes.formControl}>
-                        <TextField
-                            value={this.state.labelStrokeWidth}
-                            onChange={this.onLabelStrokeWidth}
-                            size="small"
-                            InputLabelProps={{shrink: true}}
-                            fullWidth
-                            label="Label Shadow Size"
-                        />
-                    </FormControl>
+                    {/*<FormControl className={classes.formControl}>*/}
+                    {/*    <TextField*/}
+                    {/*        value={this.state.labelStrokeWidth}*/}
+                    {/*        onChange={this.onLabelStrokeWidth}*/}
+                    {/*        size="small"*/}
+                    {/*        InputLabelProps={{shrink: true}}*/}
+                    {/*        fullWidth*/}
+                    {/*        label="Label Shadow Size"*/}
+                    {/*    />*/}
+                    {/*</FormControl>*/}
 
                 </div>
 

@@ -447,7 +447,7 @@ function ExplorePanel(props) {
                         style={{textTransform: 'capitalize'}}>Explore</Typography>
             {embeddingOptions.length > 0 &&
             <FormControl sx={{display: 'block'}}>
-                <AutocompleteVirtualized label={"Embeddings"}
+                <AutocompleteVirtualized label={"Clustering"}
                                          testId={'embeddings-input'}
                                          options={embeddingOptions}
                                          getChipText={(option) => option.text}
@@ -459,7 +459,7 @@ function ExplorePanel(props) {
             </FormControl>}
             {featureOptions.length > 0 && <FormControl sx={{display: 'block'}}>
                 <AutocompleteVirtualized onChipClick={onFeatureClick}
-                                         label={"Genes/Features"}
+                                         label={"Gene"}
                                          testId={'genes-input'}
                                          options={featureOptions}
                                          getChipText={(option) => option.id}
@@ -539,7 +539,7 @@ function ExplorePanel(props) {
                 />
             </FormControl>}
             {<FormControl sx={{display: 'block'}}>
-                <AutocompleteVirtualized label={"Sets"}
+                <AutocompleteVirtualized label={"Marker gene"}
                                          testId={'sets-input'}
                                          options={featureSetOptions}
                                          value={featureSets}
@@ -572,58 +572,58 @@ function ExplorePanel(props) {
                             onClick={onSaveFeatureList}>Save</Link></Tooltip></div>}
             </FormControl>}
         </div>
-        <div
-            style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? {maxHeight: 500} : {display: 'none'}}>
-            <Divider inset="true"/>
-            <Typography gutterBottom={false} component={"h1"}
-                        style={{textTransform: 'capitalize'}}>Filters</Typography>
-            <Grid alignContent={"flex-start"} container alignItems="center"
-                  spacing={0}>
-                <Grid item><InputLabel shrink={true}>Combine</InputLabel></Grid>
-                <Grid item><InputLabel>AND</InputLabel></Grid>
-                <Grid item>
-                    <Switch
-                        size="small"
-                        checked={combineDatasetFilters === 'or'}
-                        onChange={onCombineDatasetFilters}
-                    />
-                </Grid>
-                <Grid item><InputLabel>OR</InputLabel></Grid>
-            </Grid>
-            {datasetFilterKeys.length > 0 && selection != null &&
-            <>
-                <div style={{marginBottom: 2}}>
-                    {intFormat(selection.size) + " / " + intFormat(dataset.shape[0]) + ": "}
-                    {datasetFilterKeys.map(key => {
-                        return (
-                            <Chip
-                                onDelete={() => {
-                                    onDatasetFilterChipDeleted(key);
-                                }}
-                                onClick={onFilterChipClicked}
-                                size={"small"}
-                                style={{marginRight: 2, verticalAlign: 'bottom'}}
-                                key={key}
-                                label={key}/>
-                        );
-                    })}
-                    <Divider/>
-                    <Grid container alignItems="center" className={classes.toolbar}
-                          disabled={datasetFilterKeys.length === 0}>
-                        <Tooltip title={"Clear All"}>
-                            <IconButton size={'small'}
-                                        onClick={onDatasetFilterCleared}><HighlightOffIcon/></IconButton>
-                        </Tooltip>
-                        <Tooltip title={"Download Selected IDs"}>
-                            <IconButton size={'small'}
-                                        onClick={onDownloadSelectedIds}><CloudDownloadIcon/></IconButton>
-                        </Tooltip>
-                    </Grid>
-                </div>
-            </>
-            }
+        {/*<div*/}
+        {/*    style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? {maxHeight: 500} : {display: 'none'}}>*/}
+        {/*    <Divider inset="true"/>*/}
+        {/*    <Typography gutterBottom={false} component={"h1"}*/}
+        {/*                style={{textTransform: 'capitalize'}}>Filters</Typography>*/}
+        {/*    <Grid alignContent={"flex-start"} container alignItems="center"*/}
+        {/*          spacing={0}>*/}
+        {/*        <Grid item><InputLabel shrink={true}>Combine</InputLabel></Grid>*/}
+        {/*        <Grid item><InputLabel>AND</InputLabel></Grid>*/}
+        {/*        <Grid item>*/}
+        {/*            <Switch*/}
+        {/*                size="small"*/}
+        {/*                checked={combineDatasetFilters === 'or'}*/}
+        {/*                onChange={onCombineDatasetFilters}*/}
+        {/*            />*/}
+        {/*        </Grid>*/}
+        {/*        <Grid item><InputLabel>OR</InputLabel></Grid>*/}
+        {/*    </Grid>*/}
+        {/*    {datasetFilterKeys.length > 0 && selection != null &&*/}
+        {/*    <>*/}
+        {/*        <div style={{marginBottom: 2}}>*/}
+        {/*            {intFormat(selection.size) + " / " + intFormat(dataset.shape[0]) + ": "}*/}
+        {/*            {datasetFilterKeys.map(key => {*/}
+        {/*                return (*/}
+        {/*                    <Chip*/}
+        {/*                        onDelete={() => {*/}
+        {/*                            onDatasetFilterChipDeleted(key);*/}
+        {/*                        }}*/}
+        {/*                        onClick={onFilterChipClicked}*/}
+        {/*                        size={"small"}*/}
+        {/*                        style={{marginRight: 2, verticalAlign: 'bottom'}}*/}
+        {/*                        key={key}*/}
+        {/*                        label={key}/>*/}
+        {/*                );*/}
+        {/*            })}*/}
+        {/*            <Divider/>*/}
+        {/*            <Grid container alignItems="center" className={classes.toolbar}*/}
+        {/*                  disabled={datasetFilterKeys.length === 0}>*/}
+        {/*                <Tooltip title={"Clear All"}>*/}
+        {/*                    <IconButton size={'small'}*/}
+        {/*                                onClick={onDatasetFilterCleared}><HighlightOffIcon/></IconButton>*/}
+        {/*                </Tooltip>*/}
+        {/*                <Tooltip title={"Download Selected IDs"}>*/}
+        {/*                    <IconButton size={'small'}*/}
+        {/*                                onClick={onDownloadSelectedIds}><CloudDownloadIcon/></IconButton>*/}
+        {/*                </Tooltip>*/}
+        {/*            </Grid>*/}
+        {/*        </div>*/}
+        {/*    </>*/}
+        {/*    }*/}
 
-        </div>
+        {/*</div>*/}
     </>;
 }
 
