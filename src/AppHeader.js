@@ -234,7 +234,7 @@ function AppHeader(props) {
                 <Typography variant="subtitle2">{dataset != null ? dataset.name : ''}</Typography>
                 <div style={{display: 'flex', marginLeft: 'auto'}}>
                     <Tabs textColor="inherit" indicatorColor="secondary" value={tab} onChange={onTabChange}>
-                        <Tab data-testid="embedding-tab" value="embedding" label="Embeddings"
+                        <Tab data-testid="embedding-tab" value="embedding" label="Clustering"
                              disabled={dataset == null}/>
                         {/*<Tab data-testid="distributions-tab" value="distribution" label="Distributions"*/}
                         {/*     disabled={dataset == null || distributionData.length === 0}/>*/}
