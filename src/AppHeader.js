@@ -236,8 +236,11 @@ function AppHeader(props) {
                     <Tabs textColor="inherit" indicatorColor="secondary" value={tab} onChange={onTabChange}>
                         <Tab data-testid="embedding-tab" value="embedding" label="Embeddings"
                              disabled={dataset == null}/>
-                        <Tab data-testid="distributions-tab" value="distribution" label="Distributions"
-                             disabled={dataset == null || distributionData.length === 0}/>
+                        {/*<Tab data-testid="distributions-tab" value="distribution" label="Distributions"*/}
+                        {/*     disabled={dataset == null || distributionData.length === 0}/>*/}
+                        <Tab data-testid="heatmap-tab" value="heatmap" label="Heatmap"/>
+                        <Tab data-testid="dot_plot-tab" value="dot_plot" label="Dot Plot"/>
+                        <Tab data-testid="violin-tab" value="violin" label="Violin"/>
                     </Tabs>
                     {serverInfo.brand &&
                     <ReactMarkdown options={{

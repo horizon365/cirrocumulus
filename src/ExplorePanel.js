@@ -442,7 +442,7 @@ function ExplorePanel(props) {
         >
             <MenuItem onClick={onViewModule}>View</MenuItem>
         </Menu>}
-        <div style={tab === 'embedding' || tab === 'distribution' || tab === 'composition' ? null : {display: 'none'}}>
+        <div style={tab === 'embedding' || tab === 'distribution' || tab === 'heatmap' || tab === 'dot_plot' || tab === 'violin' || tab === 'composition' ? null : {display: 'none'}}>
             <Typography gutterBottom={false} component={"h1"}
                         style={{textTransform: 'capitalize'}}>Explore</Typography>
             {embeddingOptions.length > 0 &&

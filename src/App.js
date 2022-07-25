@@ -25,6 +25,7 @@ import AppHeader from './AppHeader';
 import CompositionPlots from './CompositionPlots';
 import DeleteDatasetDialog from './DeleteDatasetDialog';
 import DistributionPlots from './DistributionPlots';
+import DistributionPlotsPure from './DistributionPlotsPure';
 import DraggableDivider from './DraggableDivider';
 import EditNewDatasetDialog from './EditNewDatasetDialog';
 import EmbeddingChart from './EmbeddingChart';
@@ -112,6 +113,24 @@ function App(props) {
                         hidden={tab !== 'distribution'}
                     >
                         {<DistributionPlots/>}
+                    </div>}
+                    {dataset != null && <div
+                        role="tabpanel"
+                        hidden={tab !== 'heatmap'}
+                    >
+                        {<DistributionPlotsPure distributiontype={'heatmap'}/>}
+                    </div>}
+                    {dataset != null && <div
+                        role="tabpanel"
+                        hidden={tab !== 'dot_plot'}
+                    >
+                        {<DistributionPlotsPure distributiontype={'dotplot'}/>}
+                    </div>}
+                    {dataset != null && <div
+                        role="tabpanel"
+                        hidden={tab !== 'violin'}
+                    >
+                        {<DistributionPlotsPure distributiontype={'violin'}/>}
                     </div>}
                     {dataset != null && <div
                         role="tabpanel"
