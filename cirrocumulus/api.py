@@ -1,5 +1,6 @@
 import json
 import os
+import flask
 from urllib.parse import urlparse
 
 from flask import Blueprint, Response, request, stream_with_context
@@ -289,19 +290,27 @@ def handle_dataset_view():
         return json_response('', 204)
 
 
-@cirro_blueprint.route('/schema', methods=['GET'])
+@cirro_blueprint.route('/schema', methods=['GET', 'OPTIONS'], provide_automatic_options=False)
 def handle_schema():
     """Get dataset schema.
+        handle CORS issue.
     """
-    email = get_auth().auth()['email']
-    database_api = get_database()
-    dataset_id = request.args.get('id', '')
-    dataset = database_api.get_dataset(email, dataset_id)
-    dataset['url'] = map_url(dataset['url'])
-    schema = dataset  # dataset has title, etc. from database
-    schema['markers'] = database_api.get_feature_sets(email=email, dataset_id=dataset_id)
-    schema.update(dataset_api.get_schema(dataset))
-    return json_response(schema)
+    if (request.method == 'OPTIONS'):
+        response = flask.current_app.make_default_options_response()
+    else:
+        email = get_auth().auth()['email']
+        database_api = get_database()
+        dataset_id = request.args.get('id', '')
+        dataset = database_api.get_dataset(email, dataset_id)
+        dataset['url'] = map_url(dataset['url'])
+        schema = dataset  # dataset has title, etc. from database
+        schema['markers'] = database_api.get_feature_sets(email=email, dataset_id=dataset_id)
+        schema.update(dataset_api.get_schema(dataset))
+        response = json_response(schema)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Method'] = 'OPTIONS,GET'
+    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
+    return response
 
 
 @cirro_blueprint.route('/file', methods=['GET'])

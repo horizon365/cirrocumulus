@@ -1153,7 +1153,7 @@ function _loadSavedView() {
     return function (dispatch, getState) {
         let savedView = {dataset: null};
         // #q=
-        let q = window.location.hash.substring(3);
+        let q = window.location.search.substring(3);
         if (q.length > 0) {
             try {
                 savedView = JSON.parse(window.decodeURIComponent(q));
