@@ -352,6 +352,10 @@ class SideBar extends React.PureComponent {
                     </div>
                 </Popover>}
 
+                <div style={tab === 'embedding' ? null : {display: 'none'}}>
+                    <Divider/>
+                    <Typography gutterBottom={true} component={"h1"} className={classes.title}>View</Typography>
+
                     {/*<InputLabel shrink={true}>Filtered Marker Opacity</InputLabel>*/}
                     {/*<Slider*/}
                     {/*    min={0.0}*/}
@@ -364,7 +368,7 @@ class SideBar extends React.PureComponent {
                     {/*    aria-labelledby="continuous-slider"/>*/}
 
 
-                    <FormControl className={classes.formControl} style={{marginTop: '15px'}}>
+                    <FormControl className={classes.formControl}>
                         <InputLabel htmlFor="point_size">Marker Size</InputLabel>
                         <Select
                             label={"Marker Size"}
@@ -434,9 +438,6 @@ class SideBar extends React.PureComponent {
                         onMaxUIChange={this.onMaxUIChange}
                         onInterpolator={this.onInterpolator}/>
 
-                    <div style={tab === 'embedding' ? null : {display: 'none'}}>
-                    <Divider/>
-                    <Typography gutterBottom={true} component={"h1"} className={classes.title}>View</Typography>
                     <InputLabel shrink={true}>Opacity</InputLabel>
                     <Slider
                         min={0.0}
