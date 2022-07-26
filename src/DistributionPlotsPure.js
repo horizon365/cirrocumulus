@@ -45,10 +45,15 @@ function DistributionPlotsPure(props) {
     } = props;
     const textColor = chartOptions.darkMode ? 'white' : 'black';
     const keys = Object.keys(distributionData);
+    const distributiontypeToName = {
+        heatmap: 'Heatmap',
+        dotplot: 'Dot Plot',
+        violin: 'Violin',
+    }
     const typeToName = {
-        X: 'Features',
+        X: `${distributiontypeToName[distributiontype]} (Gene)`,
         modules: 'Modules',
-        obs: 'Observations'
+        obs: `${distributiontypeToName[distributiontype]} (Cell Metadata)`
     };
     keys.sort((a, b) => {
         return a.toLowerCase() - b.toLowerCase();
