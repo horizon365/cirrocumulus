@@ -47,7 +47,7 @@ function DistributionPlotsPure(props) {
     const keys = Object.keys(distributionData);
     const distributiontypeToName = {
         heatmap: 'Heatmap',
-        dotplot: 'Dot Plot',
+        dotplot: 'Dot plots',
         violin: 'Violin',
     }
     const typeToName = {

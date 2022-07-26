@@ -239,7 +239,7 @@ function AppHeader(props) {
                         {/*<Tab data-testid="distributions-tab" value="distribution" label="Distributions"*/}
                         {/*     disabled={dataset == null || distributionData.length === 0}/>*/}
                         <Tab data-testid="heatmap-tab" value="heatmap" label="Heatmap"/>
-                        <Tab data-testid="dot_plot-tab" value="dot_plot" label="Dot Plot"/>
+                        <Tab data-testid="dot_plot-tab" value="dot_plot" label="Dot plots"/>
                         <Tab data-testid="violin-tab" value="violin" label="Violin"/>
                     </Tabs>
                     {serverInfo.brand &&
