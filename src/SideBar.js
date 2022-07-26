@@ -354,7 +354,7 @@ class SideBar extends React.PureComponent {
 
                 <div style={tab === 'embedding' ? null : {display: 'none'}}>
                     <Divider/>
-                    <Typography gutterBottom={true} component={"h1"} className={classes.title}>View</Typography>
+                    <Typography gutterBottom={true} component={"h1"} className={classes.title} style={{margin:"15px 0"}}>View</Typography>
 
                     {/*<InputLabel shrink={true}>Filtered Marker Opacity</InputLabel>*/}
                     {/*<Slider*/}

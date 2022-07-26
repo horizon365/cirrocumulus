@@ -444,7 +444,7 @@ function ExplorePanel(props) {
         </Menu>}
         <div style={tab === 'embedding' || tab === 'distribution' || tab === 'heatmap' || tab === 'dot_plot' || tab === 'violin' || tab === 'composition' ? null : {display: 'none'}}>
             <Typography gutterBottom={false} component={"h1"}
-                        style={{textTransform: 'capitalize'}}>Explore</Typography>
+                        style={{textTransform: 'capitalize'}}>Options</Typography>
             {embeddingOptions.length > 0 &&
             <FormControl sx={{display: 'block'}}>
                 <AutocompleteVirtualized label={"Clustering"}
