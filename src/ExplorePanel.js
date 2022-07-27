@@ -416,9 +416,10 @@ function ExplorePanel(props) {
             onClose={onMenuClose}
         >
             <MenuItem onClick={onViewFeatureSet}>View</MenuItem>
-            <MenuItem divider={true}/>
-            <MenuItem disabled={selectedItem.value.readonly}
-                      onClick={onDeleteFeatureSet}>Delete</MenuItem>
+            {/*业务要求不需要下拉选里的Delete按钮*/}
+            {/*<MenuItem divider={true}/>*/}
+            {/*<MenuItem disabled={selectedItem.value.readonly}*/}
+            {/*          onClick={onDeleteFeatureSet}>Delete</MenuItem>*/}
         </Menu>}
 
         {'module view' === selectedPopupMenuItem && <Dialog
@@ -560,16 +561,17 @@ function ExplorePanel(props) {
                                          getOptionSelected={(option, value) => option.id === value.id}
 
                 />
-                {serverInfo.capabilities.has(SERVER_CAPABILITY_FEATURE_SETS) && <div>
-                    <Tooltip title={"Save Current Genes/Features"}>
-                        <Link
-                            style={{
-                                float: 'right',
-                                fontSize: '0.75rem',
-                                marginRight: 4,
-                                display: xSearchTokens.length === 0 ? 'none' : ''
-                            }}
-                            onClick={onSaveFeatureList}>Save</Link></Tooltip></div>}
+                {/*业务要求不要save按钮*/}
+                {/*{serverInfo.capabilities.has(SERVER_CAPABILITY_FEATURE_SETS) && <div>*/}
+                {/*    <Tooltip title={"Save Current Genes/Features"}>*/}
+                {/*        <Link*/}
+                {/*            style={{*/}
+                {/*                float: 'right',*/}
+                {/*                fontSize: '0.75rem',*/}
+                {/*                marginRight: 4,*/}
+                {/*                display: xSearchTokens.length === 0 ? 'none' : ''*/}
+                {/*            }}*/}
+                {/*            onClick={onSaveFeatureList}>Save</Link></Tooltip></div>}*/}
             </FormControl>}
         </div>
         {/*<div*/}
