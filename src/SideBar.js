@@ -353,7 +353,6 @@ class SideBar extends React.PureComponent {
                 </Popover>}
 
                 <div style={tab === 'embedding' ? null : {display: 'none'}}>
-                    <Divider/>
                     <Typography gutterBottom={true} component={"h1"} className={classes.title} style={{margin:"15px 0"}}>View</Typography>
 
                     {/*<InputLabel shrink={true}>Filtered Marker Opacity</InputLabel>*/}
@@ -438,7 +437,7 @@ class SideBar extends React.PureComponent {
                         onMaxUIChange={this.onMaxUIChange}
                         onInterpolator={this.onInterpolator}/>
 
-                    <InputLabel shrink={true}>Opacity</InputLabel>
+                    <InputLabel shrink={true} style={{marginTop: 16}}>Opacity</InputLabel>
                     <Slider
                         min={0.0}
                         max={1}
